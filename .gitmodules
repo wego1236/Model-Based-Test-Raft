@@ -1,0 +1,3 @@
+[submodule "tlc-cmd"]
+	path = tlc-cmd
+	url = git@github.com:tangruize/tlc-cmd.git
