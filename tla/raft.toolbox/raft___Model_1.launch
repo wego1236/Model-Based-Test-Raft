@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.lamport.tla.toolbox.tool.tlc.modelCheck">
+    <stringAttribute key="configurationName" value="Model_1"/>
+    <stringAttribute key="modelBehaviorSpec" value="Spec"/>
+    <intAttribute key="modelBehaviorSpecType" value="1"/>
+    <intAttribute key="modelEditorOpenTabs" value="2"/>
+    <listAttribute key="modelParameterConstants">
+        <listEntry value="AppendEntriesResponse;;;0;0"/>
+        <listEntry value="Follower;;;0;0"/>
+        <listEntry value="Leader;;;0;0"/>
+        <listEntry value="Nil;;;0;0"/>
+        <listEntry value="RequestVoteResponse;;;0;0"/>
+        <listEntry value="Candidate;;;0;0"/>
+        <listEntry value="RequestVoteRequest;;;0;0"/>
+        <listEntry value="AppendEntriesRequest;;;0;0"/>
+        <listEntry value="Value;;;0;0"/>
+        <listEntry value="Server;;;0;0"/>
+    </listAttribute>
+    <intAttribute key="modelVersion" value="20191005"/>
+    <stringAttribute key="specName" value="raft"/>
+</launchConfiguration>
