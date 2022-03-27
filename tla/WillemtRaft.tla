@@ -353,7 +353,7 @@ AtMostOneLeaderPerTerm ==
     IN ~TwoLeader
 
 \* Inv 2: committed log should be replicated to majority nodes
-CommittedLogReplicatedMajority ==
+CommittedLogReplicatedMajority ==   \* question  choose 原理 顺序跑一遍？？？
      \A i \in Server:
         IF state'[i] /= Leader \/ commitIdx'[i] = 0
         THEN TRUE
@@ -812,7 +812,7 @@ HandleAppendEntriesRequest(i, j, m) ==
     LET b   == m.body
         rb1 == [ term       |-> currentTerm'[i],
                  success    |-> FALSE,
-                 curIdx     |-> LastIdxNext(i) ]
+                 curIdx     |-> LastIdxNext(i) ]  \* if have not snapshot, can use pen??
         rb2 == [ term       |-> currentTerm'[i],
                  success    |-> TRUE,
                  curIdx     |-> b.prevLogIdx + Len(b.entries) ]
@@ -825,7 +825,7 @@ HandleAppendEntriesRequest(i, j, m) ==
             /\ ScrSet(ScrIncSent @@ ScrIncRecvUnorder(m),
                         <<"HandleAppendEntriesRequest: stale msg",
                           i, j, m.seq, scr.nSent + 1, FALSE>>)
-       ELSE /\ BecomeFollowerHelper(i, b.term, FALSE, TRUE, TRUE)
+       ELSE /\ BecomeFollowerHelper(i, b.term, FALSE, TRUE, TRUE)   \*  ??? can't understand
             /\ IF b.prevLogIdx > LastIdx(i)  \* would leave gap
                THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars,
                                    snapshotVars>>
@@ -1142,7 +1142,7 @@ BecomeCandidate(i) ==
     /\ currentTerm'     = [ currentTerm     EXCEPT ![i] = @ + 1 ]
     \* Set the local vote atomically.
     /\ votedFor'        = [ votedFor        EXCEPT ![i] = i ]
-    /\ votesGranted'    = [ votesGranted    EXCEPT ![i] = {i} ]
+    /\ votesGranted'    = [ votesGranted    EXCEPT ![i] = {i} ]   \* todo may have bugs??
     /\ RequestVoteAll(i)
 
 \* Election timeout, become candidate and send request vote
@@ -1239,3 +1239,4 @@ Inv == ScrCheckInv
 \* Modification History
 \* Last modified Fri Aug 27 18:57:08 CST 2021 by tangruize
 \* Created Tue Jun 29 21:58:02 CST 2021 by tangruize
+

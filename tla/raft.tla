@@ -88,7 +88,9 @@ leaderVars == <<nextIndex, matchIndex, elections>>
 \* End of per server variables.
 ----
 
+\* watch over the transition, now i have only figured out pc
 VARIABLE pc
+
 
 \* All variables; used for stuttering (asserting state hasn't changed).
 vars == <<messages, allLogs, serverVars, candidateVars, leaderVars, logVars, pc>>
@@ -105,19 +107,12 @@ LastTerm(xlog) == IF Len(xlog) = 0 THEN 0 ELSE xlog[Len(xlog)].term
 
 \* Helper for Send and Reply. Given a message m and bag of messages, return a
 \* new bag of messages with one more m in it.
-WithMessage(m, msgs) ==
-    IF m \in DOMAIN msgs THEN
-        [msgs EXCEPT ![m] = msgs[m] + 1]
-    ELSE
-        msgs @@ (m :> 1)
+WithMessage(m, msgs) == msgs \union {m}
 
 \* Helper for Discard and Reply. Given a message m and bag of messages, return
 \* a new bag of messages with one less m in it.
 WithoutMessage(m, msgs) ==
-    IF m \in DOMAIN msgs THEN
-        [msgs EXCEPT ![m] = msgs[m] - 1]
-    ELSE
-        msgs
+    IF m \in msgs THEN msgs \ {m} ELSE msgs
 
 \* Add a message to the bag of messages.
 Send(m) == messages' = WithMessage(m, messages)
@@ -154,11 +149,12 @@ InitLeaderVars == /\ nextIndex  = [i \in Server |-> [j \in Server |-> 1]]
 InitLogVars == /\ log          = [i \in Server |-> << >>]
                /\ commitIndex  = [i \in Server |-> 0]
 InitPc == pc = <<"Init">>
-Init == /\ messages = [m \in {} |-> 0]
+Init == /\ messages = {}
         /\ InitHistoryVars
         /\ InitServerVars
         /\ InitCandidateVars
         /\ InitLeaderVars
+        /\ InitPc
         /\ InitLogVars
 
 ----
@@ -174,6 +170,7 @@ Restart(i) ==
     /\ nextIndex'      = [nextIndex EXCEPT ![i] = [j \in Server |-> 1]]
     /\ matchIndex'     = [matchIndex EXCEPT ![i] = [j \in Server |-> 0]]
     /\ commitIndex'    = [commitIndex EXCEPT ![i] = 0]
+    /\ pc' = <<"Restart", i>>
     /\ UNCHANGED <<messages, currentTerm, votedFor, log, elections>>
 
 \* Server i times out and starts a new election.
@@ -186,18 +183,20 @@ Timeout(i) == /\ state[i] \in {Follower, Candidate}
               /\ votesResponded' = [votesResponded EXCEPT ![i] = {}]
               /\ votesGranted'   = [votesGranted EXCEPT ![i] = {}]
               /\ voterLog'       = [voterLog EXCEPT ![i] = [j \in {} |-> <<>>]]
+              /\ pc' = <<"TimeOut", i>>
               /\ UNCHANGED <<messages, leaderVars, logVars>>
 
 \* Candidate i sends j a RequestVote request.
 RequestVote(i, j) ==
     /\ state[i] = Candidate
-    /\ j \notin votesResponded[i]
+    /\ j \notin votesResponded[i]  
     /\ Send([mtype         |-> RequestVoteRequest,
              mterm         |-> currentTerm[i],
              mlastLogTerm  |-> LastTerm(log[i]),
              mlastLogIndex |-> Len(log[i]),
              msource       |-> i,
              mdest         |-> j])
+    /\ pc' = <<"RequestVote", i, j>>
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 \* Leader i sends j an AppendEntries request containing up to 1 entry.
@@ -225,6 +224,7 @@ AppendEntries(i, j) ==
                 mcommitIndex   |-> Min({commitIndex[i], lastEntry}),
                 msource        |-> i,
                 mdest          |-> j])
+    /\ pc' = <<"AppendEntries", i, j>>
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 \* Candidate i transitions to leader.
@@ -242,6 +242,7 @@ BecomeLeader(i) ==
                            elog      |-> log[i],
                            evotes    |-> votesGranted[i],
                            evoterLog |-> voterLog[i]]}
+    /\ pc' = <<"BecomeLeader", i>>
     /\ UNCHANGED <<messages, currentTerm, votedFor, candidateVars, logVars>>
 
 \* Leader i receives a client request to add v to the log.
@@ -251,6 +252,7 @@ ClientRequest(i, v) ==
                      value |-> v]
            newLog == Append(log[i], entry)
        IN  log' = [log EXCEPT ![i] = newLog]
+    /\ pc' = <<"ClientRequest", i, v>>
     /\ UNCHANGED <<messages, serverVars, candidateVars,
                    leaderVars, commitIndex>>
 
@@ -275,6 +277,7 @@ AdvanceCommitIndex(i) ==
               ELSE
                   commitIndex[i]
        IN commitIndex' = [commitIndex EXCEPT ![i] = newCommitIndex]
+    /\ pc' = <<"AdvanceCommitIndex", i>>
     /\ UNCHANGED <<messages, serverVars, candidateVars, leaderVars, log>>
 
 ----
@@ -302,6 +305,7 @@ HandleRequestVoteRequest(i, j, m) ==
                  msource      |-> i,
                  mdest        |-> j],
                  m)
+       /\ pc' = <<"HandleRequestVoteRequest", i, j>>
        /\ UNCHANGED <<state, currentTerm, candidateVars, leaderVars, logVars>>
 
 \* Server i receives a RequestVote response from server j with
@@ -320,6 +324,7 @@ HandleRequestVoteResponse(i, j, m) ==
        \/ /\ ~m.mvoteGranted
           /\ UNCHANGED <<votesGranted, voterLog>>
     /\ Discard(m)
+    /\ pc' = <<"HandleRequestVoteResponse", i, j>>
     /\ UNCHANGED <<serverVars, votedFor, leaderVars, logVars>>
 
 \* Server i receives an AppendEntries request from server j with
@@ -388,6 +393,7 @@ HandleAppendEntriesRequest(i, j, m) ==
                        /\ log' = [log EXCEPT ![i] =
                                       Append(log[i], m.mentries[1])]
                        /\ UNCHANGED <<serverVars, commitIndex, messages>>
+       /\ pc' = <<"HandleAppendEntriesRequest", i, j>>
        /\ UNCHANGED <<candidateVars, leaderVars>>
 
 \* Server i receives an AppendEntries response from server j with
@@ -402,20 +408,23 @@ HandleAppendEntriesResponse(i, j, m) ==
                                Max({nextIndex[i][j] - 1, 1})]
           /\ UNCHANGED <<matchIndex>>
     /\ Discard(m)
+    /\ pc' = <<"HandleAppendEntriesResponse", i, j>>
     /\ UNCHANGED <<serverVars, candidateVars, logVars, elections>>
 
-\* Any RPC with a newer term causes the recipient to advance its term first.
+\* Any Rpc with a newer term causes the recipient to advance its term first.
 UpdateTerm(i, j, m) ==
     /\ m.mterm > currentTerm[i]
     /\ currentTerm'    = [currentTerm EXCEPT ![i] = m.mterm]
     /\ state'          = [state       EXCEPT ![i] = Follower]
     /\ votedFor'       = [votedFor    EXCEPT ![i] = Nil]
+    /\ pc' = <<"UpdateTerm", i, j, m.mterm>>
        \* messages is unchanged so m can be processed further.
     /\ UNCHANGED <<messages, candidateVars, leaderVars, logVars>>
 
 \* Responses with stale terms are ignored.
 DropStaleResponse(i, j, m) ==
     /\ m.mterm < currentTerm[i]
+    /\ pc' = <<"DropStaleResponse">>
     /\ Discard(m)
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
@@ -423,7 +432,7 @@ DropStaleResponse(i, j, m) ==
 Receive(m) ==
     LET i == m.mdest
         j == m.msource
-    IN \* Any RPC with a newer term causes the recipient to advance
+    IN \* Any Rpc' with a newer term causes the recipient to advance
        \* its term first. Responses with stale terms are ignored.
        \/ UpdateTerm(i, j, m)
        \/ /\ m.mtype = RequestVoteRequest
@@ -444,11 +453,13 @@ Receive(m) ==
 \* The network duplicates a message
 DuplicateMessage(m) ==
     /\ Send(m)
+    /\ pc' = <<"NetDuplicate",m>>
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 \* The network drops a message
 DropMessage(m) ==
     /\ Discard(m)
+    /\ pc' = <<"NetDropMessage", m>>
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 ----
@@ -460,9 +471,9 @@ Next == /\ \/ \E i \in Server : Restart(i)
            \/ \E i \in Server, v \in Value : ClientRequest(i, v)
            \/ \E i \in Server : AdvanceCommitIndex(i)
            \/ \E i,j \in Server : AppendEntries(i, j)
-           \/ \E m \in DOMAIN messages : Receive(m)
-           \/ \E m \in DOMAIN messages : DuplicateMessage(m)
-           \/ \E m \in DOMAIN messages : DropMessage(m)
+           \/ \E m \in messages : Receive(m)
+           \/ \E m \in messages : DuplicateMessage(m)
+           \/ \E m \in messages : DropMessage(m)
            \* History variable that tracks every log ever:
         /\ allLogs' = allLogs \cup {log[i] : i \in Server}
 
@@ -471,4 +482,59 @@ Next == /\ \/ \E i \in Server : Restart(i)
 Spec == Init /\ [][Next]_vars
 
 ===============================================================================
+
+\* Changelog:
+\*
+\* 2014-12-02:
+\* - Fix AppendEntries to only send one entry at a time, as originally
+\*   intended. Since SubSeq is inclusive, the upper bound of the range should
+\*   have been nextIndex, not nextIndex + 1. Thanks to Igor Kovalenko for
+\*   reporting the issue.
+\* - Change matchIndex' to matchIndex (without the apostrophe) in
+\*   AdvanceCommitIndex. This apostrophe was not intentional and perhaps
+\*   confusing, though it makes no practical difference (matchIndex' equals
+\*   matchIndex). Thanks to Hugues Evrard for reporting the issue.
+\*
+\* 2014-07-06:
+\* - Version from PhD dissertation
+
+
+
+TLC threw an unexpected exception.
+This was probably caused by an error in the spec or model.
+See the User Output or TLC Console for clues to what happened.
+The exception was a java.lang.RuntimeException
+: Attempted to apply function with integer domain to the non-integer argument "term"
+The error occurred when TLC was evaluating the nested
+expressions at the following positions:
+0. Line 526, column 36 to line 527, column 80 in new_raft
+1. Line 526, column 36 to line 526, column 47 in new_raft
+2. Line 154, column 28 to line 154, column 42 in new_raft
+3. Line 526, column 52 to line 527, column 80 in new_raft
+4. Line 527, column 37 to line 527, column 80 in new_raft
+5. Line 527, column 37 to line 527, column 63 in new_raft
+6. Line 527, column 71 to line 527, column 80 in new_raft
+7. Line 498, column 5 to line 507, column 42 in new_raft
+8. Line 501, column 9 to line 507, column 42 in new_raft
+9. Line 501, column 12 to line 501, column 28 in new_raft
+10. Line 501, column 22 to line 501, column 28 in new_raft
+11. Line 501, column 24 to line 501, column 26 in new_raft
+12. Line 502, column 12 to line 506, column 63 in new_raft
+13. Line 504, column 45 to line 504, column 80 in new_raft
+14. Line 415, column 5 to line 455, column 48 in new_raft
+15. Line 429, column 8 to line 455, column 48 in new_raft
+16. Line 434, column 13 to line 455, column 48 in new_raft
+17. Line 439, column 18 to line 455, column 48 in new_raft
+18. Line 448, column 23 to line 455, column 48 in new_raft
+19. Line 448, column 26 to line 448, column 33 in new_raft
+20. Line 419, column 24 to line 421, column 50 in new_raft
+21. Line 420, column 27 to line 420, column 31 in new_raft
+22. Line 416, column 25 to line 418, column 60 in new_raft
+23. Line 416, column 28 to line 416, column 61 in new_raft
+24. Line 416, column 46 to line 416, column 61 in new_raft
+25. Line 118, column 19 to line 118, column 67 in new_raft
+26. Line 118, column 48 to line 118, column 67 in new_raft
+
+
+
 

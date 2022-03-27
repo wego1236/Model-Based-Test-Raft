@@ -1,0 +1,69 @@
+@!@!@STARTMSG 2262:0 @!@!@
+TLC2 Version 2.18 of Day Month 20?? (rev: f4d8c3d)
+@!@!@ENDMSG 2262 @!@!@
+@!@!@STARTMSG 2188:0 @!@!@
+Running Random Simulation with seed 1627485040149212499 with 8 workers on 8 cores with 1883MB heap and 4234MB offheap memory [pid: 17252] (Linux 5.4.0-104-generic amd64, Ubuntu 11.0.14 x86_64).
+@!@!@ENDMSG 2188 @!@!@
+@!@!@STARTMSG 2220:0 @!@!@
+Starting SANY...
+@!@!@ENDMSG 2220 @!@!@
+Parsing file /home/wego/modle_based_test_raft/tla/simulation_2022-03-25_16-13-59_1/MC.tla
+Parsing file /home/wego/modle_based_test_raft/tla/simulation_2022-03-25_16-13-59_1/new_raft.tla
+Parsing file /tmp/tlc-5489186104107741009/TLC.tla (jar:file:/home/wego/modle_based_test_raft/tlc-cmd/tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /tmp/tlc-5489186104107741009/Naturals.tla (jar:file:/home/wego/modle_based_test_raft/tlc-cmd/tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /tmp/tlc-5489186104107741009/FiniteSets.tla (jar:file:/home/wego/modle_based_test_raft/tlc-cmd/tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /tmp/tlc-5489186104107741009/Sequences.tla (jar:file:/home/wego/modle_based_test_raft/tlc-cmd/tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Semantic processing of module Naturals
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module new_raft
+Semantic processing of module MC
+@!@!@STARTMSG 2219:0 @!@!@
+SANY finished.
+@!@!@ENDMSG 2219 @!@!@
+@!@!@STARTMSG 2185:0 @!@!@
+Starting... (2022-03-25 16:14:00)
+@!@!@ENDMSG 2185 @!@!@
+@!@!@STARTMSG 2269:0 @!@!@
+Computed 1 initial states...
+@!@!@ENDMSG 2269 @!@!@
+@!@!@STARTMSG 1000:1 @!@!@
+TLC threw an unexpected exception.
+This was probably caused by an error in the spec or model.
+See the User Output or TLC Console for clues to what happened.
+The exception was a java.lang.RuntimeException
+: Attempted to select field "args" from a non-record value 0
+line 550, col 26 to line 550, col 38 of module new_raft
+@!@!@ENDMSG 1000 @!@!@
+@!@!@STARTMSG 2121:1 @!@!@
+The behavior up to this point is:
+@!@!@ENDMSG 2121 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+1: <Init line 194, col 9 to line 201, col 19 of module new_raft>
+/\ elections = {}
+/\ messages = {}
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Init">>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1)
+/\ votesResponded = (s1 :> {} @@ s2 :> {} @@ s3 :> {})
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {})
+/\ voterLog = (s1 :> << >> @@ s2 :> << >> @@ s3 :> << >>)
+/\ scr = [lock |-> 0]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> Nil)
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2209:0 @!@!@
+Progress(0) at 2022-03-25 16:14:00: 1 states generated, -1 distinct states found, -1 states left on queue.
+@!@!@ENDMSG 2209 @!@!@
+@!@!@STARTMSG 2186:0 @!@!@
+Finished in 414ms at (2022-03-25 16:14:00)
+@!@!@ENDMSG 2186 @!@!@

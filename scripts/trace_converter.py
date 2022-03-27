@@ -4,7 +4,7 @@
 
 from io import StringIO
 from trace_reader import trace_reader, set_user_dict, set_kv_handler
-from mc_log_converter import get_converted_string
+# from mc_log_converter import get_converted_string
 
 
 def _kv_outside_handler(k, v):
@@ -60,23 +60,21 @@ def _states(s):
         cur_term = s['currentTerm'][i]
         vote = s['votedFor'][i]
         vote = -1 if vote is None else vote
-        commit_idx = s['commitIdx'][i]
+        commit_idx = s['commitIndex'][i]
         if is_leader:
             next_idx = ' '.join(str(j) for j in s['nextIdx'][i].values())
             match_idx = ' '.join(str(j) for j in s['matchIdx'][i].values())
         else:
             next_idx, match_idx = None, None
-        last_idx = s['snapshotLastIdx'][i]
-        last_term = s['snapshotLastTerm'][i]
         log = ' '.join('{}:{}'.format(j['term'], j['value'])
                        for j in s['log'][i])
         to_append = [role, cur_term, vote, commit_idx, next_idx, match_idx,
-                     last_idx, last_term, log]
+                    log]
         l.append(j for j in to_append if j is not None)
     return ';'.join(' '.join(map(str, i)) for i in l)
 
 
-def _pc(s): return s['scr']['pc']
+def _pc(s): return s['pc']
 def _nil(s): return None
 def _server(s): return _node_id_dict[_pc_field(s, 1)]
 def _state_n(s): return _pc_field(s, 1)
@@ -87,7 +85,7 @@ def _msg_response(s): return _pc_field(s, 4)
 def _send_ok(s): return _pc_field(s, 4)
 def _cont_file(s): return _pc_field(s, 4)
 def _log(s): return _server_info(s, 'log')
-def _n_server(s): return len(s['log'])
+def _n_server(s): return len(s['state'])
 def _msg(s): return _server_info(s, 'messages')[_msg_seq(s)]
 def _client_cmd(s): return _log(s)[-1]['value']
 
@@ -95,12 +93,12 @@ def _client_cmd(s): return _log(s)[-1]['value']
 _action_dict = {
     'Continue':                    'TRACE_NIL',
     'Init':                        'TRACE_INIT_SERVER',
-    'Timeout':                     'TRACE_ELECTION_TIMEOUT',
+    'TimeOut':                     'TRACE_ELECTION_TIMEOUT',
     'AppendEntriesAll':            'TRACE_HEARTBEAT',
     'Restart':                     'TRACE_RESTART',
     'FinishLoop':                  'TRACE_NIL',
-    'DoLoop: AppendEntries':       'TRACE_SEND_APPENDENTRIES',
-    'DoLoop: RequestVote':         'TRACE_SEND_REQUESTVOTE',
+    'AppendEntries':               'TRACE_SEND_APPENDENTRIES',
+    'RequestVote':                 'TRACE_SEND_REQUESTVOTE',
     'DoLoop: SendSnapshot':        'TRACE_SEND_SNAPSHOT',
     'HandleRequestVoteRequest':    'TRACE_HANDLE_REQUESTVOTE',
     'HandleRequestVoteResponse':   'TRACE_HANDLE_REQUESTVOTE_RESPONSE',
@@ -119,7 +117,7 @@ _callback_dict = {
     # FIELDS:                       type     states   server   peer   msg_seq   data
     'Continue':                    (_action, _states, _state_n, _nil, _nil,     _cont_file),
     'Init':                        (_action, _states, _n_server),
-    'Timeout':                     (_action, _states, _server, ),
+    'TimeOut':                     (_action, _states, _server, ),
     'AppendEntriesAll':            (_action, _states, _server, ),
     'Restart':                     (_action, _states, _server, ),
     'FinishLoop':                  (_action, _states, ),
