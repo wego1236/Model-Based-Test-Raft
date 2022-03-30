@@ -2,7 +2,7 @@
 TLC2 Version 2.16 of 31 December 2020 (rev: cdddf55)
 @!@!@ENDMSG 2262 @!@!@
 @!@!@STARTMSG 2187:0 @!@!@
-Running breadth-first search Model-Checking with fp 58 and seed -4168210563769426140 with 4 workers on 8 cores with 1177MB heap and 2646MB offheap memory [pid: 11260] (Linux 5.4.0-104-generic amd64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
+Running breadth-first search Model-Checking with fp 102 and seed -6250743979209483595 with 4 workers on 8 cores with 1177MB heap and 2646MB offheap memory [pid: 66926] (Linux 5.4.0-104-generic amd64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
 @!@!@ENDMSG 2187 @!@!@
 @!@!@STARTMSG 2220:0 @!@!@
 Starting SANY...
@@ -23,14 +23,116 @@ Semantic processing of module MC
 SANY finished.
 @!@!@ENDMSG 2219 @!@!@
 @!@!@STARTMSG 2185:0 @!@!@
-Starting... (2022-03-27 11:34:39)
+Starting... (2022-03-30 21:36:02)
 @!@!@ENDMSG 2185 @!@!@
-@!@!@STARTMSG 2146:1 @!@!@
-The invariant MonotonicMatchIdx is not a state predicate (one with no primes or temporal operators).
-Note that a bug can cause TLC to incorrectly report this error.
-If you believe your TLA+ or PlusCal specification to be correct,
-please check if this bug described in LevelNode.java starting at line 590ff affects you.
-@!@!@ENDMSG 2146 @!@!@
-@!@!@STARTMSG 2186:0 @!@!@
-Finished in 517ms at (2022-03-27 11:34:39)
-@!@!@ENDMSG 2186 @!@!@
+@!@!@STARTMSG 2189:0 @!@!@
+Computing initial states...
+@!@!@ENDMSG 2189 @!@!@
+@!@!@STARTMSG 2190:0 @!@!@
+Finished computing initial states: 1 distinct state generated at 2022-03-30 21:36:02.
+@!@!@ENDMSG 2190 @!@!@
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(12) at 2022-03-30 21:36:05: 102,743 states generated (102,743 s/min), 49,782 distinct states found (49,782 ds/min), 41,154 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE
+"2"  TRUE

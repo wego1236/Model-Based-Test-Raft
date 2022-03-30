@@ -11,8 +11,8 @@ def _kv_outside_handler(k, v):
     if k != 'messages':
         return k, v
     d = dict()
-    for i in v:
-        d[i['seq']] = i
+    # for i in v:
+    #     d[i['seq']] = i
     return k, d
 
 
@@ -62,8 +62,8 @@ def _states(s):
         vote = -1 if vote is None else vote
         commit_idx = s['commitIndex'][i]
         if is_leader:
-            next_idx = ' '.join(str(j) for j in s['nextIdx'][i].values())
-            match_idx = ' '.join(str(j) for j in s['matchIdx'][i].values())
+            next_idx = ' '.join(str(j) for j in s['nextIndex'][i].values())
+            match_idx = ' '.join(str(j) for j in s['matchIndex'][i].values())
         else:
             next_idx, match_idx = None, None
         log = ' '.join('{}:{}'.format(j['term'], j['value'])
@@ -93,19 +93,19 @@ def _client_cmd(s): return _log(s)[-1]['value']
 _action_dict = {
     'Continue':                    'TRACE_NIL',
     'Init':                        'TRACE_INIT_SERVER',
-    'TimeOut':                     'TRACE_ELECTION_TIMEOUT',
+    'Timeout':                     'TRACE_ELECTION_TIMEOUT',
     'AppendEntriesAll':            'TRACE_HEARTBEAT',
     'Restart':                     'TRACE_RESTART',
     'FinishLoop':                  'TRACE_NIL',
     'AppendEntries':               'TRACE_SEND_APPENDENTRIES',
     'RequestVote':                 'TRACE_SEND_REQUESTVOTE',
-    'DoLoop: SendSnapshot':        'TRACE_SEND_SNAPSHOT',
+    'DoLoop: AppendEntries':       'TRACE_SEND_APPENDENTRIES',
+    'DoLoop: RequestVote':         'TRACE_SEND_REQUESTVOTE',
     'HandleRequestVoteRequest':    'TRACE_HANDLE_REQUESTVOTE',
     'HandleRequestVoteResponse':   'TRACE_HANDLE_REQUESTVOTE_RESPONSE',
     'HandleAppendEntriesRequest':  'TRACE_HANDLE_APPENDENTRIES',
     'HandleAppendEntriesResponse': 'TRACE_HANDLE_APPENDENTRIES_RESPONSE',
     'HandleSnapshotRequest':       'TRACE_HANDLE_SNAPSHOT',
-    'ExecSnapshot':                'TRACE_EXEC_SNAPSHOT',
     'ClientRequest':               'TRACE_CLIENT_OPERATION',
     'Drop':                        'TRACE_DROP_MSG',
     'Duplicate':                   'TRACE_DUPLICATE_MSG',
@@ -117,20 +117,20 @@ _callback_dict = {
     # FIELDS:                       type     states   server   peer   msg_seq   data
     'Continue':                    (_action, _states, _state_n, _nil, _nil,     _cont_file),
     'Init':                        (_action, _states, _n_server),
-    'TimeOut':                     (_action, _states, _server, ),
+    'Timeout':                     (_action, _states, _server, ),
     'AppendEntriesAll':            (_action, _states, _server, ),
     'Restart':                     (_action, _states, _server, ),
     'FinishLoop':                  (_action, _states, ),
-    'DoLoop':                      (_action, _states, _server, _peer, _msg_seq, _send_ok),
-    'HandleRequestVoteRequest':    (_action, _states, _server, _peer, _msg_seq, _msg_response),
+    'DoLoop':                      (_action, _states, _server, _peer, _msg_seq, _nil),
+    'HandleRequestVoteRequest':    (_action, _states, _server, _peer, _msg_seq, _nil),
     'HandleRequestVoteResponse':   (_action, _states, _server, _peer, _msg_seq),
-    'HandleAppendEntriesRequest':  (_action, _states, _server, _peer, _msg_seq, _msg_response),
-    'HandleAppendEntriesResponse': (_action, _states, _server, _peer, _msg_seq, _msg_response),
-    'HandleSnapshotRequest':       (_action, _states, _server, _peer, _msg_seq, _msg_response),
+    'HandleAppendEntriesRequest':  (_action, _states, _server, _peer, _msg_seq, _nil),
+    'HandleAppendEntriesResponse': (_action, _states, _server, _peer, _msg_seq, _nil),
+    'HandleSnapshotRequest':       (_action, _states, _server, _peer, _msg_seq, _nil),
     'ExecSnapshot':                (_action, _states, _server, ),
     'ClientRequest':               (_action, _states, _server, _nil,  _nil,     _client_cmd),
     'Drop':                        (_action, _states, _nil,    _nil,  _msg_seq),
-    'Duplicate':                   (_action, _states, _nil,    _nil,  _msg_seq, _msg_response),
+    'Duplicate':                   (_action, _states, _nil,    _nil,  _msg_seq, _nil),
     'NetworkPartition':            (_action, _states, _nil,    _nil,  _nil,     _partition),
     'NetworkRecover':              (_action, _states, )
 }

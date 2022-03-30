@@ -1,3 +1,6 @@
 [submodule "tlc-cmd"]
 	path = tlc-cmd
 	url = git@github.com:tangruize/tlc-cmd.git
+[submodule "6.824-raft"]
+	path = 6.824-raft
+	url = git@github.com:wego1236/6.824-raft.git

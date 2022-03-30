@@ -119,7 +119,11 @@ LastTerm(xlog) == IF Len(xlog) = 0 THEN 0 ELSE xlog[Len(xlog)].term
 
 \* Helper for Send and Reply. Given a message m and bag of messages, return a
 \* new bag of messages with one more m in it.
-WithMessage(m, msgs) == msgs \union {m}
+WithMessage(m, msgs) == LET msgSeq == scr.nSent + 1
+                        m_ == IF "seq" \in DOMAIN m
+                              THEN {[ m EXCEPT !["seq"] = msgSeq ]}
+                              ELSE {m @@ ( "seq" :> msgSeq )}
+                        IN msgs \union m_
 
 \* Helper for Discard and Reply. Given a message m and bag of messages, return
 \* a new bag of messages with one less m in it.
@@ -159,6 +163,18 @@ ScrDeleteLockArg(a)     == IF ScrNotLocked
                                 IN IF Cardinality(s) = 0
                                    THEN ScrUnsetLock
                                    ELSE ("lock" :> [scr.lock EXCEPT !.args = s]) 
+
+
+ScrGetHelper(member)    == (member :> scr[member])
+ScrIncHelper(member)    == (member :> scr[member] + 1)
+\* ScrIncSent              == LET num1 == Cardinality(messages')
+\*                                num2 == Cardinality(messages)
+\*                            IN IF \/ num1 > num2
+\*                                  \/ num1 = num2 /\ messages' /= messages
+\*                               THEN ScrIncHelper("nSent")
+\*                               ELSE ScrGetHelper("nSent")
+ScrIncSent    == ScrIncHelper("nSent")
+
 
 \* Get lock args: all servers except me, and in set s and parted nodes.
 LockArgs(i, s, type) ==
@@ -227,23 +243,8 @@ NextIdxGtZero ==
         ELSE TRUE
 
 
-\* Inv 7: Monotonic match index
-MonotonicMatchIdx ==
-    \A i \in Server:
-        IF state[i] = Leader
-        THEN  \A j \in Server:
-            LET next_mactchIdx == matchIndex'[i][j]
-                cur_matchIdx == matchIndex[i][j] 
-            IN    
-                \/ next_mactchIdx >= matchIndex[i][j]
-                \/ pc = "Restart" /\ next_mactchIdx = 0
-        ELSE TRUE
-
-
-
-
-
-
+Inv == /\ AtMostOneLeaderPerTerm
+       /\ CommittedLogReplicatedMajority
 
 
 
@@ -263,7 +264,7 @@ InitLeaderVars == /\ nextIndex  = [i \in Server |-> [j \in Server |-> 1]]
 InitLogVars == /\ log          = [i \in Server |-> << >>]
                /\ commitIndex  = [i \in Server |-> 0]
 Initpc == pc = <<"Init">>
-InitLock ==  scr = [lock |-> Nil]
+InitLock ==  scr = [lock |-> Nil, nSent |-> 0]
 Init == /\ messages = {}
         /\ InitHistoryVars
         /\ InitServerVars
@@ -362,13 +363,15 @@ HandleAppendEntriesRequest(i, j, m) ==
             THEN /\ UNCHANGED <<serverVars, logVars>>
                  /\ Reply(msg @@ ("body" :> rb1), m)
                  /\ pc' = <<"HandleAppendEntriesRequest: stale msg",
-                          i, j>>
+                          i, j, m.seq>>
+                 /\ ScrSet(ScrIncSent)
             ELSE /\ BecomeFollower(i ,b.term) \* here serverVars has changed
                  /\ IF b.prevLogIndex > Len(log[i])
                     THEN /\ UNCHANGED <<logVars>>
                          /\ Reply(msg @@ ("body" :> rb1), m)
+                         /\ ScrSet(ScrIncSent)
                          /\ pc' = <<"HandleAppendEntriesRequest: would leave gap",
-                          i, j>>
+                          i, j, m.seq>>
                     ELSE IF /\ b.prevLogIndex > 0
                             /\ b.prevLogIndex <= Len(log[i])
                             /\ ~log[i][b.prevLogIndex].term = b.prevLogTerm
@@ -379,7 +382,8 @@ HandleAppendEntriesRequest(i, j, m) ==
                                                 curIdx     |-> b.prevLogIndex - 1]  \* todo may have bugs
                                    IN Reply(msg @@("body") :> rb3, m)
                                 /\ pc' = <<"HandleAppendEntriesRequest: log mismatch",
-                                        i, j>>
+                                        i, j, m.seq>>
+                                /\ ScrSet(ScrIncSent)
                          ELSE /\ IF Len(b.entries) = 0
                                  THEN UNCHANGED <<log>> \* if entries is null ,log doesn't change
                                  ELSE LET new == [index2 \in 1..b.prevLogIndex |-> \*todo may have bugs
@@ -398,8 +402,9 @@ HandleAppendEntriesRequest(i, j, m) ==
                                                     {Max({Len(log'[i]), 1})})]
                               /\ Reply(msg @@ ("body" :> rb2), m)
                               /\ pc' = <<"HandleAppendEntriesRequest: success",
-                                       i, j>>
-        /\ UNCHANGED <<candidateVars, leaderVars, scr>>
+                                       i, j, m.seq>>
+                              /\ ScrSet(ScrIncSent)
+        /\ UNCHANGED <<candidateVars, leaderVars>>
 
 \* Advance commmitIdx.
 AdvanceCommitIdx(s, idx) ==
@@ -424,33 +429,34 @@ HandleAppendEntriesResponse(i, j, m) ==
         retry      == /\ ~b.success
                       /\ b.curIdx >= matchIndex[i][j] \* not success, why use match, not netxIdx????
     IN IF not_leader
-       THEN /\ UNCHANGED <<serverVars, candidateVars, logVars, leaderVars>>
+       THEN /\ UNCHANGED <<serverVars, candidateVars, logVars, leaderVars, scr>>
             /\ Discard(m)
-            /\ pc' = <<"HandleAppendEntriesResponse: not leader", i , j>>
+            /\ pc' = <<"HandleAppendEntriesResponse: not leader", i , j, m.seq>>
        ELSE IF demote
-            THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars>>
+            THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars, scr>>
                  /\ Discard(m)
                  /\ BecomeFollower(i, b.term)
                  /\ pc' = <<"HandleAppendEntriesResponse: demote",
-                          i, j>>
+                          i, j, m.seq>>
             ELSE IF stale_msg
                  THEN /\ Discard(m)
                       /\ pc' = <<"HandleAppendEntriesResponse: stale msg",
-                                i, j>>
+                                i, j, m.seq>>
                       /\ UNCHANGED <<candidateVars, leaderVars, logVars, serverVars>>
                  ELSE IF retry
                       THEN /\ UNCHANGED <<serverVars, candidateVars, matchIndex,
                                           elections, logVars>>
                            /\ nextIndex' = [nextIndex EXCEPT ![i][j] = b.curIdx + 1]
                            /\ Reply(AppendEntriesHelper(i, j), m)
-                           /\ pc' = <<"HandleAppendEntriesResponse: mismatch and retry", i, j>>
+                           /\ ScrSet(ScrIncSent)
+                           /\ pc' = <<"HandleAppendEntriesResponse: mismatch and retry", i, j, m.seq>>
                       ELSE /\ UNCHANGED <<serverVars, candidateVars,
-                                          elections, logVars, messages>>
+                                          elections, logVars, messages, scr>>
                            /\ nextIndex' = [ nextIndex EXCEPT ![i][j] = b.curIdx+1 ]
                            /\ matchIndex' = [ matchIndex EXCEPT ![i][j] = b.curIdx ]
                            /\ AdvanceCommitIdx(i, b.curIdx)
                            /\ pc' = <<"HandleAppendEntriesResponse: success",
-                                          i, j>>
+                                          i, j, m.seq>>
 
 \* Leader i receives a client request to add v to the log.
 ClientRequest(i, v) ==
@@ -485,7 +491,7 @@ BecomeCandidate(i) ==
     /\ currentTerm'     = [ currentTerm     EXCEPT ![i] = @ + 1 ]
     \* Set the local vote atomically.
     /\ votedFor'        = [ votedFor        EXCEPT ![i] = i ]
-    /\ votesGranted'    = [ votesGranted    EXCEPT ![i] = {} ]
+    /\ votesGranted'    = [ votesGranted    EXCEPT ![i] = {i} ]
     /\ RequestVoteAll(i)
 
 \* Server i receives a RequestVote request from server j.
@@ -497,10 +503,11 @@ HandleRequestVoteRequest(i, j, m) ==
         logOk       ==  \/ body.lastLogTerm > LastTerm(log[i])
                         \/ /\ body.lastLogTerm = LastTerm(log[i])
                            /\ body.lastLogIdx >= Len(log[i])
+        voteNil     == \/ votedFor[i] = Nil
+                       \/ body.term > currentTerm[i]
         canGrant    == /\ ~IsLeader(i)
-                       /\ body.term >= currentTerm[i]
                        /\ logOk
-                       /\ votedFor[i] \in {Nil, j}
+                       /\ votedFor[i] \in {body.candidate, Nil}
         rb          == [ term |-> currentTerm'[i], voteGranted |-> canGrant ]
         stale_msg   == body.term < currentTerm[i]
         demote      == body.term > currentTerm[i]
@@ -510,14 +517,17 @@ HandleRequestVoteRequest(i, j, m) ==
                          body |-> rb ]
     IN IF IsLeader(i)
        THEN /\ UNCHANGED <<serverVars, leaderVars, logVars, candidateVars>>
+            /\ Print("1", TRUE)
             /\ Reply(msg, m)
+            /\ ScrSet(ScrIncSent)
             /\ pc' = <<"HandleRequestVoteRequest: leader not granted",
-                              i, j>>
+                              i, j, m.seq>>
        ELSE IF stale_msg
-            THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars, serverVars>>
+            THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars, serverVars, scr>>
                  /\ Discard(m)
+                 /\ Print("2", TRUE)
                  /\ pc' = <<"HandleRequestVoteRequest: stale msg",
-                                i, j>>
+                                i, j, m.seq>>
             ELSE IF demote
                  THEN   /\ UNCHANGED <<leaderVars, logVars, candidateVars, scr>>
                         /\ state'       = [ state       EXCEPT ![i] = Follower ]
@@ -525,22 +535,31 @@ HandleRequestVoteRequest(i, j, m) ==
                         /\ votedFor' = [ votedFor  EXCEPT ![i] = IF canGrant
                                                   THEN Nil      ELSE j ]
                         /\ Reply(msg, m)
+                        /\ ScrSet(ScrIncSent)
                         /\ pc' = <<"HandleRequestVoteRequest: granted",
-                                   i, j>>
+                                   i, j, m.seq>>
+                        /\ Print("3", TRUE)
                  ELSE IF canGrant
                       THEN  /\ UNCHANGED <<state, currentTerm, leaderVars, logVars, candidateVars, scr>>
                             /\ votedFor' = [ votedFor  EXCEPT ![i] = IF canGrant
                                                   THEN Nil      ELSE j ]
                             /\ Reply(msg, m)
+                            /\ ScrSet(ScrIncSent)
                             /\ pc' = <<"HandleRequestVoteRequest: granted",
-                                   i, j>>
+                                   i, j, m.seq>>
+                            /\ Print("4", TRUE)
                       ELSE /\ UNCHANGED <<vars>>
+                            /\ pc' = <<"HandleRequestVoteRequest: all fail",
+                                   i, j, m.seq>>
+                            /\ Print(votedFor[i], {body.candidate, Nil})
+                            
 
 
 HandleRequestVoteResponse(i, j, m) ==
     \* This tallies votes even when the current state is not Candidate, but
     \* they won't be looked at, so it doesn't matter.
     /\ Discard(m)
+    /\ UNCHANGED <<scr>>
     /\ LET b == m.body
            notCandidate == ~IsCandidate(i)
            staleMsg     == currentTerm[i] > b.term
@@ -552,12 +571,12 @@ HandleRequestVoteResponse(i, j, m) ==
                         [] notGranted   -> "HandleRequestVoteResponse: not granted"
                         [] OTHER        -> Assert(FALSE,
                            "HandleRequestVoteResponse unhandled CASE"),
-                      i, j>>
+                      i, j, m.seq>>
           ELSE IF currentTerm[i] < b.term
                THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars>>
                     /\ BecomeFollower(i, b.term)
                     /\ pc' = <<"HandleRequestVoteResponse: demote",
-                                  i, j>>
+                                  i, j, m.seq>>
                ELSE /\ votesGranted' = [ votesGranted EXCEPT ![i] =
                                             @ \union {j}]
                     /\ IF IsQuorum(votesGranted'[i])
@@ -565,10 +584,10 @@ HandleRequestVoteResponse(i, j, m) ==
                             /\ BecomeLeader(i)
                             \* Note: sends append entries immediately
                             /\ pc' = <<"HandleRequestVoteResponse: promote",
-                                        i, j>>
+                                        i, j, m.seq>>
                        ELSE /\ UNCHANGED <<serverVars, leaderVars, logVars>>
                             /\ pc' = <<"HandleRequestVoteResponse: get vote",
-                                          i, j>>
+                                          i, j, m.seq>>
 
 
 \* Election timeout, become candidate and send request vote
@@ -580,8 +599,7 @@ Receive(m) ==
     LET t == m.type
         i == m.to
         j == m.from
-    IN  /\ UNCHANGED <<scr>>
-        /\ CASE t = AppendEntriesRequest  -> HandleAppendEntriesRequest (i, j, m)
+    IN  /\ CASE t = AppendEntriesRequest  -> HandleAppendEntriesRequest (i, j, m)
             [] t = AppendEntriesResponse -> HandleAppendEntriesResponse(i, j, m)
             [] t = RequestVoteRequest    -> HandleRequestVoteRequest   (i, j, m)
             [] t = RequestVoteResponse   -> HandleRequestVoteResponse  (i, j, m)
@@ -591,14 +609,16 @@ Receive(m) ==
 
 DuplicateMessage(m) ==
     /\ Send(m)
-    /\ pc' = <<"NetDuplicate",m>>
-    /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars, scr>>
+    /\ pc' = <<"Duplicate", Nil, Nil, m.seq>>
+    /\ ScrSet(ScrIncSent)
+    /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 \* The network drops a message
 DropMessage(m) ==
     /\ Discard(m)
-    /\ pc' = <<"NetDropMessage", m>>
-    /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars, scr>>
+    /\ pc' = <<"Drop", Nil, Nil, m.seq>>
+    /\ ScrSet(ScrIncSent)
+    /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 
 DoHandleAppendEntriesRequest    == ScrNotLocked /\ \E m \in messages:
@@ -627,19 +647,19 @@ DoLoop == /\ UNCHANGED <<serverVars, leaderVars, logVars, candidateVars>>
           /\ Cardinality(scr.lock.args) /= 0
           /\ LET a  == CHOOSE x \in scr.lock.args: TRUE
                  t  == ScrGetLockType
-                 s  == ScrDeleteLockArg(a)
+                 s  == ScrDeleteLockArg(a) @@ ScrIncSent
                  i  == a.from
                  j  == a.to
              IN CASE t = AppendEntriesRequest ->
                     /\ AppendEntries(i, j)
                     /\ ScrSet(s)
                     /\ pc' =  <<"DoLoop: AppendEntries",
-                                   i, j>>
+                                   i, j, scr.nSent + 1>>
                 [] t = RequestVoteRequest   ->
                     /\ RequestVote(i, j)
                     /\ ScrSet(s)
                     /\ pc' = <<"DoLoop: RequestVote",
-                                   i, j>>
+                                   i, j, scr.nSent + 1>>
 
 
 Next == 
