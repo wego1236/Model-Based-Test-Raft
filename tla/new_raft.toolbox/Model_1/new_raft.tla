@@ -229,11 +229,25 @@ CommittedLogReplicatedMajority ==
                                 \*   /\ Print(F[j-1], TRUE)
              IN IsQuorum(F[nServer][2])
 
-NextIdxGtMatchIdx ==
+
+CommittedLogDurable ==
+    IF pc[1] = "Restart" THEN TRUE ELSE
     \A i \in Server:
-        IF state[i] = Leader
-        THEN \A j \in Server: nextIndex[i][j] > matchIndex[i][j]
-        ELSE TRUE
+        LET lenNext == commitIndex'[i]
+            lenCur  == commitIndex[i]
+            len     == Min({lenNext, lenCur})
+            logNext == SubSeq(log'[i], 1, lenNext)
+            logCur  == SubSeq(log[i], 1, lenCur)
+        IN IF len = 0 \/ Len(logNext) = 0 \/ Len(logCur) = 0 THEN TRUE
+           ELSE /\ Len(logNext) >= len
+                /\ Len(logCur) >= len
+                /\ SubSeq(logNext, Len(logNext) + 1 - len, Len(logNext)) =
+                   SubSeq(logCur, Len(logCur) + 1 - len, Len(logCur))
+
+
+
+
+
 
 \* Inv 10: next index is greater than 0
 NextIdxGtZero ==
@@ -242,11 +256,34 @@ NextIdxGtZero ==
         THEN \A j \in Server: nextIndex[i][j] > 0
         ELSE TRUE
 
+\* Inv 11: next index is greater than match index
+NextIdxGtMatchIdx ==
+    \A i \in Server:
+        IF state[i] = Leader
+        THEN \A j \in Server: nextIndex[i][j] > matchIndex[i][j]
+        ELSE TRUE
+
+
+SelectSeqWithIdx(s, Test(_)) == 
+    LET F[i \in 0..Len(s)] == 
+        IF i = 0
+        THEN <<>>
+        ELSE IF Test(s[i])
+             THEN Append(F[i-1], s[i])
+             ELSE F[i-1]
+    IN F[Len(s)]
+
+inv == <<CommittedLogDurable>>
+
+
+CheckInv == Len(SelectSeqWithIdx(inv,
+                        LAMBDA x: ~x )) = 0
 
 Inv == /\ AtMostOneLeaderPerTerm
        /\ CommittedLogReplicatedMajority
-
-
+       /\ NextIdxGtZero
+       /\ NextIdxGtMatchIdx
+    \*    /\ CheckInv
 
 ----
 \* Define initial values for all variables
@@ -517,7 +554,6 @@ HandleRequestVoteRequest(i, j, m) ==
                          body |-> rb ]
     IN IF IsLeader(i)
        THEN /\ UNCHANGED <<serverVars, leaderVars, logVars, candidateVars>>
-            /\ Print("1", TRUE)
             /\ Reply(msg, m)
             /\ ScrSet(ScrIncSent)
             /\ pc' = <<"HandleRequestVoteRequest: leader not granted",
@@ -525,33 +561,31 @@ HandleRequestVoteRequest(i, j, m) ==
        ELSE IF stale_msg
             THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars, serverVars, scr>>
                  /\ Discard(m)
-                 /\ Print("2", TRUE)
                  /\ pc' = <<"HandleRequestVoteRequest: stale msg",
                                 i, j, m.seq>>
             ELSE IF demote
-                 THEN   /\ UNCHANGED <<leaderVars, logVars, candidateVars, scr>>
+                 THEN   /\ UNCHANGED <<leaderVars, logVars, candidateVars>>
                         /\ state'       = [ state       EXCEPT ![i] = Follower ]
                         /\ currentTerm' = [ currentTerm EXCEPT ![i] = body.term ]
                         /\ votedFor' = [ votedFor  EXCEPT ![i] = IF canGrant
-                                                  THEN Nil      ELSE j ]
+                                                  THEN j      ELSE Nil ]
                         /\ Reply(msg, m)
                         /\ ScrSet(ScrIncSent)
-                        /\ pc' = <<"HandleRequestVoteRequest: granted",
+                        /\ IF canGrant
+                           THEN  pc' = <<"HandleRequestVoteRequest: demote and granted ",
                                    i, j, m.seq>>
-                        /\ Print("3", TRUE)
+                           ELSE  pc' = <<"HandleRequestVoteRequest: demote and not granted ",
+                                   i, j, m.seq>>
                  ELSE IF canGrant
-                      THEN  /\ UNCHANGED <<state, currentTerm, leaderVars, logVars, candidateVars, scr>>
+                      THEN  /\ UNCHANGED <<state, currentTerm, leaderVars, logVars, candidateVars>>
                             /\ votedFor' = [ votedFor  EXCEPT ![i] = IF canGrant
-                                                  THEN Nil      ELSE j ]
+                                                  THEN j      ELSE @ ]
                             /\ Reply(msg, m)
                             /\ ScrSet(ScrIncSent)
                             /\ pc' = <<"HandleRequestVoteRequest: granted",
                                    i, j, m.seq>>
-                            /\ Print("4", TRUE)
                       ELSE /\ UNCHANGED <<vars>>
-                            /\ pc' = <<"HandleRequestVoteRequest: all fail",
-                                   i, j, m.seq>>
-                            /\ Print(votedFor[i], {body.candidate, Nil})
+                            
                             
 
 
@@ -559,7 +593,6 @@ HandleRequestVoteResponse(i, j, m) ==
     \* This tallies votes even when the current state is not Candidate, but
     \* they won't be looked at, so it doesn't matter.
     /\ Discard(m)
-    /\ UNCHANGED <<scr>>
     /\ LET b == m.body
            notCandidate == ~IsCandidate(i)
            staleMsg     == currentTerm[i] > b.term
@@ -573,7 +606,7 @@ HandleRequestVoteResponse(i, j, m) ==
                            "HandleRequestVoteResponse unhandled CASE"),
                       i, j, m.seq>>
           ELSE IF currentTerm[i] < b.term
-               THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars>>
+               THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars, scr>>
                     /\ BecomeFollower(i, b.term)
                     /\ pc' = <<"HandleRequestVoteResponse: demote",
                                   i, j, m.seq>>
@@ -583,12 +616,14 @@ HandleRequestVoteResponse(i, j, m) ==
                        THEN /\ UNCHANGED <<elections, currentTerm, votedFor, logVars>>
                             /\ BecomeLeader(i)
                             \* Note: sends append entries immediately
+                            /\ ScrSet(LockArgs(i, {}, AppendEntriesRequest)) \* heart beat
                             /\ pc' = <<"HandleRequestVoteResponse: promote",
                                         i, j, m.seq>>
-                       ELSE /\ UNCHANGED <<serverVars, leaderVars, logVars>>
+                       ELSE /\ UNCHANGED <<serverVars, leaderVars, logVars, scr>>
                             /\ pc' = <<"HandleRequestVoteResponse: get vote",
                                           i, j, m.seq>>
-
+    
+    
 
 \* Election timeout, become candidate and send request vote
 Timeout(i) == /\ ~IsLeader(i)
