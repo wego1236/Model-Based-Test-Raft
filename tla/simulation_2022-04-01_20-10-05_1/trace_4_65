@@ -1,0 +1,215 @@
+---------------- MODULE /home/wego/modle_based_test_raft/tla/simulation_2022-04-01_20-10-05_1/trace_4_65 -----------------
+STATE_1 == 
+/\ elections = {}
+/\ messages = {}
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Init">>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {})
+/\ scr = [nSent |-> 0, lock |-> Nil]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> Nil)
+
+
+STATE_2 == 
+/\ elections = {}
+/\ messages = {}
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Restart", s3>>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {})
+/\ scr = [nSent |-> 0, lock |-> Nil]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> Nil)
+
+
+STATE_3 == 
+/\ elections = {}
+/\ messages = {}
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Restart", s2>>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {})
+/\ scr = [nSent |-> 0, lock |-> Nil]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> Nil)
+
+
+STATE_4 == 
+/\ elections = {}
+/\ messages = {}
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Restart", s3>>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {})
+/\ scr = [nSent |-> 0, lock |-> Nil]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> Nil)
+
+
+STATE_5 == 
+/\ elections = {}
+/\ messages = {}
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Restart", s2>>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {})
+/\ scr = [nSent |-> 0, lock |-> Nil]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> Nil)
+
+
+STATE_6 == 
+/\ elections = {}
+/\ messages = {}
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Timeout: election", s3>>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Candidate)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 2)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {s3})
+/\ scr = [ lock |->
+      [ type |-> RequestVoteRequest,
+        args |-> {[from |-> s3, to |-> s1], [from |-> s3, to |-> s2]} ],
+  nSent |-> 0 ]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> s3)
+
+
+STATE_7 == 
+/\ elections = {}
+/\ messages = { [ type |-> RequestVoteRequest,
+    from |-> s3,
+    to |-> s1,
+    body |->
+        [term |-> 2, candidate |-> s3, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 1 ] }
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"DoLoop: RequestVote", s3, s1, 1>>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Candidate)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 2)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {s3})
+/\ scr = [ lock |-> [type |-> RequestVoteRequest, args |-> {[from |-> s3, to |-> s2]}],
+  nSent |-> 1 ]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> s3)
+
+
+STATE_8 == 
+/\ elections = {}
+/\ messages = { [ type |-> RequestVoteRequest,
+    from |-> s3,
+    to |-> s1,
+    body |->
+        [term |-> 2, candidate |-> s3, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 1 ],
+  [ type |-> RequestVoteRequest,
+    from |-> s3,
+    to |-> s2,
+    body |->
+        [term |-> 2, candidate |-> s3, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 2 ] }
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"DoLoop: RequestVote", s3, s2, 2>>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Candidate)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 2)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {s3})
+/\ scr = [lock |-> Nil, nSent |-> 2]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> s3)
+
+
+STATE_9 == 
+/\ elections = {}
+/\ messages = { [ type |-> RequestVoteRequest,
+    from |-> s3,
+    to |-> s1,
+    body |->
+        [term |-> 2, candidate |-> s3, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 1 ] }
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Drop", Nil, Nil, 2>>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Candidate)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 2)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {s3})
+/\ scr = [nSent |-> 3, lock |-> Nil]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> s3)
+
+
+STATE_10 == 
+/\ elections = {}
+/\ messages = { [ type |-> RequestVoteRequest,
+    from |-> s3,
+    to |-> s1,
+    body |->
+        [term |-> 2, candidate |-> s3, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 1 ] }
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Timeout: election", s1>>
+/\ state = (s1 :> Candidate @@ s2 :> Follower @@ s3 :> Candidate)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 2 @@ s2 :> 1 @@ s3 :> 2)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
