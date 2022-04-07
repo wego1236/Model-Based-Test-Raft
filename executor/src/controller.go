@@ -1,7 +1,6 @@
 package main
 
 import (
-	"6.824/raft"
 	"bufio"
 	"fmt"
 	"io"
@@ -15,6 +14,7 @@ import (
 type Controller struct {
 	traces     []Trace
 	trace_dict map[string]int
+	cfg        *config
 }
 
 var Trace_type = [...]string{
@@ -117,13 +117,36 @@ func (controller *Controller) Trace_executor() {
 		switch trace.Type {
 		case TRACE_NIL:
 			{
-
+				//do nothing
 			}
 		case TRACE_INIT_SERVER:
 			{
-				cfg := raft.Make_config(t, servers, false, false)
+				controller.cfg = Make_config(trace.Server, false, false)
 			}
-
+		case TRACE_ELECTION_TIMEOUT:
+			{
+				controller.cfg.rafts[trace.Server].StartElection() // start election, become leader, and send Call
+			}
+		case TRACE_HEARTBEAT:
+			{
+				controller.cfg.appendAll(trace.Server)
+			}
+		case TRACE_HANDLE_REQUESTVOTE:
+			{
+				controller.cfg.net.Handle(trace.MsgSeq)
+			}
+		case TRACE_HANDLE_APPENDENTRIES:
+			{
+				controller.cfg.net.Handle(trace.MsgSeq)
+			}
+		case TRACE_HANDLE_APPENDENTRIES_RESPONSE:
+			{
+				controller.cfg.net.Handleresponse(trace.MsgSeq)
+			}
+		case TRACE_HANDLE_REQUESTVOTE_RESPONSE:
+			{
+				controller.cfg.net.Handleresponse(trace.MsgSeq)
+			}
 		}
 	}
 }

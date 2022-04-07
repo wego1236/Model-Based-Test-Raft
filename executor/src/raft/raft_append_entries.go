@@ -23,7 +23,7 @@ type AppendEntriesReply struct {
 	XLen   int // length of logs
 }
 
-func (rf *Raft) replicate() {
+func (rf *Raft) Replicate() {
 	rf.lock("replicate")
 	defer rf.unLock("replicate")
 	DPrintf("%d, replicate log entries", rf.me)

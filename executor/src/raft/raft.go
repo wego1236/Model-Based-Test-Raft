@@ -111,6 +111,8 @@ type Raft struct {
 	// Look at the paper's Figure 2 for a description of what
 	// state a Raft server must maintain.
 
+	test bool // or controller, not to tick timer
+
 	stopCh  chan struct{} // 监听信道，通过调用 close 来关闭 来获取信息，从而推出函数循环（用来模拟election timer 计数）
 	applyCh chan ApplyMsg
 }
@@ -409,18 +411,21 @@ func (rf *Raft) tick() {
 			// DPrintf("kill??? %v", rf.killed())
 			return
 		case <-timer.C: //send appendEntries
-			if _, isLeader := rf.GetState(); !isLeader {
-				DPrintf("%d, is not leader, don't send entries", rf.me)
-				return
+			if !rf.test {
+				if _, isLeader := rf.GetState(); !isLeader {
+					DPrintf("%d, is not leader, don't send entries", rf.me)
+					return
+				}
+				rf.Replicate()
+				timer.Reset(AppendEntriesTimeout)
 			}
-			rf.replicate()
-			timer.Reset(AppendEntriesTimeout)
+
 		}
 	}
 }
 
 // electiontimer 到时 会触发的函数， 进行选举
-func (rf *Raft) startElection() {
+func (rf *Raft) StartElection() {
 	rf.lock("startElection1")
 	DPrintf("%d, startElection1", rf.me)
 	rf.resetElectionTimer() // 选举开始 会重置 计时器
@@ -490,12 +495,13 @@ func randElectionTimeout() time.Duration {
 // for any long-running work.
 //
 func Make(peers []*labrpc.ClientEnd, me int,
-	persister *Persister, applyCh chan ApplyMsg) *Raft {
+	persister *Persister, applyCh chan ApplyMsg, test bool) *Raft {
 	rf := &Raft{}
 	rf.peers = peers
 	rf.persister = persister
 	rf.me = me
 	rf.applyCh = applyCh
+	rf.test = test
 	DPrintf("%d make", rf.me)
 	// Your initialization code here (2A, 2B, 2C).
 
@@ -523,7 +529,10 @@ func Make(peers []*labrpc.ClientEnd, me int,
 				return
 			case <-rf.elecitonTimer.C:
 				DPrintf("%d, election timeout", rf.me)
-				rf.startElection()
+				if !rf.test {
+					rf.StartElection()
+				}
+
 			}
 		}
 	}()

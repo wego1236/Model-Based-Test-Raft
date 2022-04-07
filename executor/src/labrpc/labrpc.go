@@ -112,6 +112,8 @@ func (e *ClientEnd) Call(svcMeth string, args interface{}, reply interface{}) bo
 	// wait for the reply.
 	//
 	rep := <-req.replyCh
+
+	//todo : jie huo, buwang xia zou ,deng wo diao yong
 	if rep.ok {
 		rb := bytes.NewBuffer(rep.reply)
 		rd := labgob.NewDecoder(rb)
@@ -137,6 +139,8 @@ type Network struct {
 	done           chan struct{} // closed when Network is cleaned up
 	count          int32         // total RPC count, for statistics
 	bytes          int64         // total bytes send, for statistics
+	msgs           []interface{}
+	ech            chan replyMsg
 }
 
 func MakeNetwork() *Network {
@@ -148,15 +152,21 @@ func MakeNetwork() *Network {
 	rn.connections = map[interface{}](interface{}){}
 	rn.endCh = make(chan reqMsg)
 	rn.done = make(chan struct{})
+	rn.msgs = make([]interface{}, 0)
 
 	// single goroutine to handle all ClientEnd.Call()s
 	go func() {
 		for {
 			select {
 			case xreq := <-rn.endCh:
+				//has changed
+				//fmt.Printf("%+v\n", xreq) // test rpc
+				rn.msgs = append(rn.msgs, xreq)
 				atomic.AddInt32(&rn.count, 1)
 				atomic.AddInt64(&rn.bytes, int64(len(xreq.args)))
-				go rn.processReq(xreq)
+				// what we need is to stop this function and we handle this by controller
+				//go rn.processReq(xreq)
+				//rn.Handle(xreq)
 			case <-rn.done:
 				return
 			}
@@ -164,6 +174,12 @@ func MakeNetwork() *Network {
 	}()
 
 	return rn
+}
+
+// corresponding to handlerequestvote, handleappendentries, because this function send Call to server
+func (rn *Network) Handle(idx int) {
+	xreq := rn.msgs[idx].(reqMsg)
+	go rn.processReq(xreq)
 }
 
 func (rn *Network) Cleanup() {
@@ -218,7 +234,7 @@ func (rn *Network) isServerDead(endname interface{}, servername interface{}, ser
 }
 
 func (rn *Network) processReq(req reqMsg) {
-	enabled, servername, server, reliable, longreordering := rn.readEndnameInfo(req.endname)
+	enabled, servername, server, reliable, _ := rn.readEndnameInfo(req.endname)
 
 	if enabled && servername != nil && server != nil {
 		if reliable == false {
@@ -237,60 +253,19 @@ func (rn *Network) processReq(req reqMsg) {
 		// in a separate thread so that we can periodically check
 		// if the server has been killed and the RPC should get a
 		// failure reply.
-		ech := make(chan replyMsg)
+		rn.ech = make(chan replyMsg)
 		go func() {
 			r := server.dispatch(req)
-			ech <- r
+			rn.ech <- r
 		}()
 
 		// wait for handler to return,
 		// but stop waiting if DeleteServer() has been called,
 		// and return an error.
-		var reply replyMsg
-		replyOK := false
-		serverDead := false
-		for replyOK == false && serverDead == false {
-			select {
-			case reply = <-ech:
-				replyOK = true
-			case <-time.After(100 * time.Millisecond):
-				serverDead = rn.isServerDead(req.endname, servername, server)
-				if serverDead {
-					go func() {
-						<-ech // drain channel to let the goroutine created earlier terminate
-					}()
-				}
-			}
-		}
 
-		// do not reply if DeleteServer() has been called, i.e.
-		// the server has been killed. this is needed to avoid
-		// situation in which a client gets a positive reply
-		// to an Append, but the server persisted the update
-		// into the old Persister. config.go is careful to call
-		// DeleteServer() before superseding the Persister.
-		serverDead = rn.isServerDead(req.endname, servername, server)
+		//has changed
+		rn.Handleresponse(req)
 
-		if replyOK == false || serverDead == true {
-			// server was killed while we were waiting; return error.
-			req.replyCh <- replyMsg{false, nil}
-		} else if reliable == false && (rand.Int()%1000) < 100 {
-			// drop the reply, return as if timeout
-			req.replyCh <- replyMsg{false, nil}
-		} else if longreordering == true && rand.Intn(900) < 600 {
-			// delay the response for a while
-			ms := 200 + rand.Intn(1+rand.Intn(2000))
-			// Russ points out that this timer arrangement will decrease
-			// the number of goroutines, so that the race
-			// detector is less likely to get upset.
-			time.AfterFunc(time.Duration(ms)*time.Millisecond, func() {
-				atomic.AddInt64(&rn.bytes, int64(len(reply.reply)))
-				req.replyCh <- reply
-			})
-		} else {
-			atomic.AddInt64(&rn.bytes, int64(len(reply.reply)))
-			req.replyCh <- reply
-		}
 	} else {
 		// simulate no reply and eventual timeout.
 		ms := 0
@@ -308,6 +283,57 @@ func (rn *Network) processReq(req reqMsg) {
 		})
 	}
 
+}
+
+func (rn *Network) Handleresponse(req reqMsg) {
+	_, servername, server, reliable, longreordering := rn.readEndnameInfo(req.endname)
+	//ech := make(chan replyMsg)
+	var reply replyMsg
+	replyOK := false
+	serverDead := false
+	for replyOK == false && serverDead == false {
+		select {
+		case reply = <-rn.ech:
+			//fmt.Printf("%+v\n", reply)
+			replyOK = true
+		case <-time.After(100 * time.Millisecond):
+			serverDead = rn.isServerDead(req.endname, servername, server)
+			if serverDead {
+				go func() {
+					<-rn.ech // drain channel to let the goroutine created earlier terminate
+				}()
+			}
+		}
+	}
+
+	// do not reply if DeleteServer() has been called, i.e.
+	// the server has been killed. this is needed to avoid
+	// situation in which a client gets a positive reply
+	// to an Append, but the server persisted the update
+	// into the old Persister. config.go is careful to call
+	// DeleteServer() before superseding the Persister.
+	serverDead = rn.isServerDead(req.endname, servername, server)
+
+	if replyOK == false || serverDead == true {
+		// server was killed while we were waiting; return error.
+		req.replyCh <- replyMsg{false, nil}
+	} else if reliable == false && (rand.Int()%1000) < 100 {
+		// drop the reply, return as if timeout
+		req.replyCh <- replyMsg{false, nil}
+	} else if longreordering == true && rand.Intn(900) < 600 {
+		// delay the response for a while
+		ms := 200 + rand.Intn(1+rand.Intn(2000))
+		// Russ points out that this timer arrangement will decrease
+		// the number of goroutines, so that the race
+		// detector is less likely to get upset.
+		time.AfterFunc(time.Duration(ms)*time.Millisecond, func() {
+			atomic.AddInt64(&rn.bytes, int64(len(reply.reply)))
+			req.replyCh <- reply
+		})
+	} else {
+		atomic.AddInt64(&rn.bytes, int64(len(reply.reply)))
+		req.replyCh <- reply
+	}
 }
 
 // create a client end-point.
