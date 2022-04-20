@@ -11,6 +11,8 @@ type AppendEntriesArgs struct {
 	PrevLogTerm  int        //term of prevLogIndex term
 	Entries      []LogEntry // log entries to store
 	LeaderCommit int        //leader's commitIndex
+	From         int
+	To           int
 }
 
 type AppendEntriesReply struct {
@@ -21,6 +23,8 @@ type AppendEntriesReply struct {
 	XTerm  int // term of conflict entry
 	XIndex int // index of first entry of Xterm
 	XLen   int // length of logs
+	From   int
+	To     int
 }
 
 func (rf *Raft) Replicate() {
@@ -50,7 +54,7 @@ func (rf *Raft) sendLogEntry(server int) {
 
 	PrevLogTerm := rf.logs[prevLogIndex].Term
 	args := AppendEntriesArgs{Term: rf.currentTerm, LeaderId: rf.me,
-		PrevLogIndex: prevLogIndex, PrevLogTerm: PrevLogTerm,
+		PrevLogIndex: prevLogIndex, PrevLogTerm: PrevLogTerm, From: rf.me, To: server,
 		LeaderCommit: rf.commitIndex, Entries: nil}
 	if rf.nextIndex[server] < len(rf.logs) {
 		args.Entries = rf.logs[rf.nextIndex[server]:]
@@ -135,6 +139,8 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	DPrintf("leader %d append Entries to %d, me is %d", args.LeaderId, rf.me, rf.me)
 	// DPrintf("leader %d append Entries %v to %d, me is %d", args.LeaderId, *args, rf.me, rf.me)
 	defer rf.unLock("AppendEntries")
+	reply.From = rf.me
+	reply.To = args.From
 	if args.Term < rf.currentTerm {
 		DPrintf("%d, args.Term < rf.currentTerm, throw the append entries", rf.me)
 		reply.Success = false

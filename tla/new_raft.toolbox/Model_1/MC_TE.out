@@ -2,7 +2,7 @@
 TLC2 Version 2.16 of 31 December 2020 (rev: cdddf55)
 @!@!@ENDMSG 2262 @!@!@
 @!@!@STARTMSG 2187:0 @!@!@
-Running breadth-first search Model-Checking with fp 36 and seed 8049742613340177700 with 4 workers on 8 cores with 1177MB heap and 2646MB offheap memory [pid: 12947] (Linux 5.4.0-105-generic amd64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
+Running breadth-first search Model-Checking with fp 2 and seed 5092111675436065974 with 4 workers on 8 cores with 1177MB heap and 2646MB offheap memory [pid: 11498] (Linux 5.4.0-105-generic amd64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
 @!@!@ENDMSG 2187 @!@!@
 @!@!@STARTMSG 2220:0 @!@!@
 Starting SANY...
@@ -23,17 +23,14 @@ Semantic processing of module MC
 SANY finished.
 @!@!@ENDMSG 2219 @!@!@
 @!@!@STARTMSG 2185:0 @!@!@
-Starting... (2022-04-01 17:28:47)
+Starting... (2022-04-20 11:28:02)
 @!@!@ENDMSG 2185 @!@!@
 @!@!@STARTMSG 2189:0 @!@!@
 Computing initial states...
 @!@!@ENDMSG 2189 @!@!@
 @!@!@STARTMSG 2190:0 @!@!@
-Finished computing initial states: 1 distinct state generated at 2022-04-01 17:28:47.
+Finished computing initial states: 1 distinct state generated at 2022-04-20 11:28:03.
 @!@!@ENDMSG 2190 @!@!@
 @!@!@STARTMSG 2200:0 @!@!@
-Progress(12) at 2022-04-01 17:28:50: 113,194 states generated (113,194 s/min), 59,878 distinct states found (59,878 ds/min), 50,513 states left on queue.
-@!@!@ENDMSG 2200 @!@!@
-@!@!@STARTMSG 2200:0 @!@!@
-Progress(14) at 2022-04-01 17:29:50: 3,344,421 states generated (3,231,227 s/min), 1,542,284 distinct states found (1,482,406 ds/min), 1,318,101 states left on queue.
+Progress(14) at 2022-04-20 11:28:06: 68,127 states generated (68,127 s/min), 29,064 distinct states found (29,064 ds/min), 18,852 states left on queue.
 @!@!@ENDMSG 2200 @!@!@

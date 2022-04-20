@@ -52,32 +52,37 @@ package labrpc
 import (
 	"bytes"
 	"executor/labgob"
+	"fmt"
 	"log"
-	"math/rand"
 	"reflect"
 	"strings"
 	"sync"
 	"sync/atomic"
-	"time"
 )
 
 type reqMsg struct {
-	endname  interface{} // name of sending ClientEnd
-	svcMeth  string      // e.g. "Raft.AppendEntries"
-	argsType reflect.Type
-	args     []byte
-	replyCh  chan replyMsg
+	endname   interface{} // name of sending ClientEnd
+	svcMeth   string      // e.g. "Raft.AppendEntries"
+	argsType  reflect.Type
+	replyType reflect.Type
+	args      []byte
+	replyCh   chan replyMsg
+	//msgSeq   int
 }
 
 type replyMsg struct {
 	ok    bool
 	reply []byte
+	req   *reqMsg
+	//replyType reflect.Type
+	//msgSeq int
 }
 
 type ClientEnd struct {
 	endname interface{}   // this end-point's name
 	ch      chan reqMsg   // copy of Network.endCh
 	done    chan struct{} // closed when Network is cleaned up
+	//msgs    map[int32]interface{}
 }
 
 // send an RPC, wait for the reply.
@@ -89,6 +94,7 @@ func (e *ClientEnd) Call(svcMeth string, args interface{}, reply interface{}) bo
 	req.svcMeth = svcMeth
 	req.argsType = reflect.TypeOf(args)
 	req.replyCh = make(chan replyMsg)
+	req.replyType = reflect.TypeOf(reply)
 
 	qb := new(bytes.Buffer)
 	qe := labgob.NewEncoder(qb)
@@ -102,7 +108,7 @@ func (e *ClientEnd) Call(svcMeth string, args interface{}, reply interface{}) bo
 	//
 	select {
 	case e.ch <- req:
-		// the request has been sent.
+	// the request has been sent.
 	case <-e.done:
 		// entire Network has been destroyed.
 		return false
@@ -139,7 +145,7 @@ type Network struct {
 	done           chan struct{} // closed when Network is cleaned up
 	count          int32         // total RPC count, for statistics
 	bytes          int64         // total bytes send, for statistics
-	msgs           []interface{}
+	msgs           map[string]interface{}
 	ech            chan replyMsg
 }
 
@@ -152,7 +158,7 @@ func MakeNetwork() *Network {
 	rn.connections = map[interface{}](interface{}){}
 	rn.endCh = make(chan reqMsg)
 	rn.done = make(chan struct{})
-	rn.msgs = make([]interface{}, 0)
+	rn.msgs = make(map[string]interface{})
 
 	// single goroutine to handle all ClientEnd.Call()s
 	go func() {
@@ -161,12 +167,26 @@ func MakeNetwork() *Network {
 			case xreq := <-rn.endCh:
 				//has changed
 				//fmt.Printf("%+v\n", xreq) // test rpc
-				rn.msgs = append(rn.msgs, xreq)
+				args := reflect.New(xreq.argsType)
+				// decode the argument.
+				ab := bytes.NewBuffer(xreq.args)
+				ad := labgob.NewDecoder(ab)
+				ad.Decode(args.Interface())
+				fv := args.Elem()
+				hashInfo := xreq.svcMeth + fmt.Sprintf("%+v", fv.Elem().FieldByName("Term")) + fmt.Sprintf("%+v", fv.Elem().FieldByName("From")) + fmt.Sprintf("%+v", fv.Elem().FieldByName("To"))
+				//fmt.Printf("req hash_info: %+v \n", hashInfo)
 				atomic.AddInt32(&rn.count, 1)
+				// simulate send
+				rn.mu.Lock()
+				//rn.msgs[rn.count] = xreq
+				rn.msgs[hashInfo] = xreq
+				fmt.Printf("msg add %v\n", hashInfo)
+				rn.mu.Unlock()
 				atomic.AddInt64(&rn.bytes, int64(len(xreq.args)))
 				// what we need is to stop this function and we handle this by controller
 				//go rn.processReq(xreq)
-				//rn.Handle(xreq)
+
+				//rn.Handle(rn.count)
 			case <-rn.done:
 				return
 			}
@@ -176,10 +196,36 @@ func MakeNetwork() *Network {
 	return rn
 }
 
+func (rn *Network) GetMsgs() map[string]interface{} {
+	return rn.msgs
+}
+
 // corresponding to handlerequestvote, handleappendentries, because this function send Call to server
-func (rn *Network) Handle(idx int) {
-	xreq := rn.msgs[idx].(reqMsg)
-	go rn.processReq(xreq)
+func (rn *Network) Handle(idx string) {
+	xreq, err := rn.msgs[idx].(reqMsg)
+	if err == false {
+		log.Panicf("idx: %v doesn't exist", idx)
+	}
+
+	rn.processReq(xreq) // here wo turn go rn.pro to rn.pro,  delete concurrency, we test, not have found bugs
+	//time.
+}
+
+// need put xreq in idx position
+//func (rn *Network) Send(idx int32) {
+//	rn.mu.Lock()
+//	defer rn.mu.Unlock()
+//	rn.msgs[idx] = xreq
+//}
+
+//  4/7 可能还需要再改一下handle response  因为现在需要定位到他在数组中的位置，所以可能还需要用原来的方式，只不过把所有reply放到数组中，再进行发送，应该是可行的
+func (rn *Network) Handleresponse(msgSeq string) {
+	//fmt.Printf("%+v\n", rn.msgs)
+	xrep, err := rn.msgs[msgSeq].(replyMsg)
+	if err == false {
+		log.Panicf("idx: %v doesn't exist", msgSeq)
+	}
+	xrep.req.replyCh <- xrep
 }
 
 func (rn *Network) Cleanup() {
@@ -233,107 +279,47 @@ func (rn *Network) isServerDead(endname interface{}, servername interface{}, ser
 	return false
 }
 
+//change -> send directly, no timeout
 func (rn *Network) processReq(req reqMsg) {
-	enabled, servername, server, reliable, _ := rn.readEndnameInfo(req.endname)
+	_, _, server, _, _ := rn.readEndnameInfo(req.endname)
 
-	if enabled && servername != nil && server != nil {
-		if reliable == false {
-			// short delay
-			ms := (rand.Int() % 27)
-			time.Sleep(time.Duration(ms) * time.Millisecond)
-		}
-
-		if reliable == false && (rand.Int()%1000) < 100 {
-			// drop the request, return as if timeout
-			req.replyCh <- replyMsg{false, nil}
-			return
-		}
-
-		// execute the request (call the RPC handler).
-		// in a separate thread so that we can periodically check
-		// if the server has been killed and the RPC should get a
-		// failure reply.
-		rn.ech = make(chan replyMsg)
-		go func() {
-			r := server.dispatch(req)
-			rn.ech <- r
-		}()
-
-		// wait for handler to return,
-		// but stop waiting if DeleteServer() has been called,
-		// and return an error.
-
-		//has changed
-		rn.Handleresponse(req)
-
-	} else {
-		// simulate no reply and eventual timeout.
-		ms := 0
-		if rn.longDelays {
-			// let Raft tests check that leader doesn't send
-			// RPCs synchronously.
-			ms = (rand.Int() % 7000)
-		} else {
-			// many kv tests require the client to try each
-			// server in fairly rapid succession.
-			ms = (rand.Int() % 100)
-		}
-		time.AfterFunc(time.Duration(ms)*time.Millisecond, func() {
-			req.replyCh <- replyMsg{false, nil}
-		})
+	//if enabled && servername != nil && server != nil {
+	//	if reliable == false {
+	//		// short delay
+	//		ms := (rand.Int() % 27)
+	//		time.Sleep(time.Duration(ms) * time.Millisecond)
+	//	}
+	//
+	//	if reliable == false && (rand.Int()%1000) < 100 {
+	//		// drop the request, return as if timeout
+	//		//change, send to channel, wo change to put in map, next call handleresponse handle
+	//		//req.replyCh <- replyMsg{false, nil}
+	//		atomic.AddInt32(&rn.count, 1) //
+	//		rn.mu.Lock()
+	//		rn.msgs[rn.count] = replyMsg{false, nil, &req}
+	//		rn.mu.Unlock()
+	//		//rn.Handleresponse(rn.count)
+	//		return
+	//	}
+	//}
+	r := server.dispatch(req)
+	rb := bytes.NewBuffer(r.reply)
+	rd := labgob.NewDecoder(rb)
+	reply := reflect.New(req.replyType)
+	rd.Decode(reply.Interface())
+	fv := reply.Elem()
+	var svcMeth string
+	if req.svcMeth == "Raft.RequestVote" {
+		svcMeth = "Raft.RequestVoteResponse"
+	} else if req.svcMeth == "Raft.AppendEntries" {
+		svcMeth = "Raft.AppendEntriesResponse"
 	}
+	hashInfo := svcMeth + fmt.Sprintf("%+v", fv.Elem().FieldByName("Term")) + fmt.Sprintf("%+v", fv.Elem().FieldByName("From")) + fmt.Sprintf("%+v", fv.Elem().FieldByName("To"))
 
-}
-
-func (rn *Network) Handleresponse(req reqMsg) {
-	_, servername, server, reliable, longreordering := rn.readEndnameInfo(req.endname)
-	//ech := make(chan replyMsg)
-	var reply replyMsg
-	replyOK := false
-	serverDead := false
-	for replyOK == false && serverDead == false {
-		select {
-		case reply = <-rn.ech:
-			//fmt.Printf("%+v\n", reply)
-			replyOK = true
-		case <-time.After(100 * time.Millisecond):
-			serverDead = rn.isServerDead(req.endname, servername, server)
-			if serverDead {
-				go func() {
-					<-rn.ech // drain channel to let the goroutine created earlier terminate
-				}()
-			}
-		}
-	}
-
-	// do not reply if DeleteServer() has been called, i.e.
-	// the server has been killed. this is needed to avoid
-	// situation in which a client gets a positive reply
-	// to an Append, but the server persisted the update
-	// into the old Persister. config.go is careful to call
-	// DeleteServer() before superseding the Persister.
-	serverDead = rn.isServerDead(req.endname, servername, server)
-
-	if replyOK == false || serverDead == true {
-		// server was killed while we were waiting; return error.
-		req.replyCh <- replyMsg{false, nil}
-	} else if reliable == false && (rand.Int()%1000) < 100 {
-		// drop the reply, return as if timeout
-		req.replyCh <- replyMsg{false, nil}
-	} else if longreordering == true && rand.Intn(900) < 600 {
-		// delay the response for a while
-		ms := 200 + rand.Intn(1+rand.Intn(2000))
-		// Russ points out that this timer arrangement will decrease
-		// the number of goroutines, so that the race
-		// detector is less likely to get upset.
-		time.AfterFunc(time.Duration(ms)*time.Millisecond, func() {
-			atomic.AddInt64(&rn.bytes, int64(len(reply.reply)))
-			req.replyCh <- reply
-		})
-	} else {
-		atomic.AddInt64(&rn.bytes, int64(len(reply.reply)))
-		req.replyCh <- reply
-	}
+	rn.mu.Lock()
+	rn.msgs[hashInfo] = r
+	fmt.Printf("msg add %v\n", hashInfo)
+	rn.mu.Unlock()
 }
 
 // create a client end-point.
@@ -453,7 +439,7 @@ func (rs *Server) dispatch(req reqMsg) replyMsg {
 		}
 		log.Fatalf("labrpc.Server.dispatch(): unknown service %v in %v.%v; expecting one of %v\n",
 			serviceName, serviceName, methodName, choices)
-		return replyMsg{false, nil}
+		return replyMsg{false, nil, &req}
 	}
 }
 
@@ -528,7 +514,7 @@ func (svc *Service) dispatch(methname string, req reqMsg) replyMsg {
 		re := labgob.NewEncoder(rb)
 		re.EncodeValue(replyv)
 
-		return replyMsg{true, rb.Bytes()}
+		return replyMsg{true, rb.Bytes(), &req}
 	} else {
 		choices := []string{}
 		for k, _ := range svc.methods {
@@ -536,6 +522,6 @@ func (svc *Service) dispatch(methname string, req reqMsg) replyMsg {
 		}
 		log.Fatalf("labrpc.Service.dispatch(): unknown method %v in %v; expecting one of %v\n",
 			methname, req.svcMeth, choices)
-		return replyMsg{false, nil}
+		return replyMsg{false, nil, &req}
 	}
 }

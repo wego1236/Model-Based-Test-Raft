@@ -274,7 +274,7 @@ func (cfg *config) start1(i int, applier func(int, chan raft.ApplyMsg)) {
 
 	applyCh := make(chan raft.ApplyMsg)
 
-	rf := raft.Make(ends, i, cfg.saved[i], applyCh, false)
+	rf := raft.Make(ends, i, cfg.saved[i], applyCh, true)
 
 	cfg.mu.Lock()
 	cfg.rafts[i] = rf

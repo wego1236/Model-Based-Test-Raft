@@ -560,7 +560,7 @@ HandleRequestVoteRequest(i, j, m) ==
                        \/ body.term > currentTerm[i]
         canGrant    == /\ ~IsLeader(i)
                        /\ logOk
-                       /\ body.term >= currentTerm[i]
+                       /\ body.term >= currentTerm'[i]
 \*                       /\ votedFor[i] \in {body.candidate, Nil}
                        /\ voteNil
         rb          == [ term |-> currentTerm'[i], voteGranted |-> canGrant ]

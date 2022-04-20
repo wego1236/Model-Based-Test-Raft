@@ -289,7 +289,7 @@ Inv == /\ AtMostOneLeaderPerTerm
 \* Define initial values for all variables
 
 InitHistoryVars == /\ elections = {}
-InitServerVars == /\ currentTerm = [i \in Server |-> 1]
+InitServerVars == /\ currentTerm = [i \in Server |-> 0]
                   /\ state       = [i \in Server |-> Follower]
                   /\ votedFor    = [i \in Server |-> Nil]
 InitCandidateVars == /\ votesGranted   = [i \in Server |-> {}]
@@ -399,16 +399,20 @@ HandleAppendEntriesRequest(i, j, m) ==
     IN  /\  IF b.term < currentTerm[i] \* Term is smaller, reply false.
             THEN /\ UNCHANGED <<serverVars, logVars>>
                  /\ Reply(msg @@ ("body" :> rb1), m)
-                 /\ pc' = <<"HandleAppendEntriesRequest: stale msg",
-                          i, j, m.seq>>
+                \*  /\ pc' = <<"HandleAppendEntriesRequest: stale msg",
+                \*           i, j, m.seq>>
+                /\ pc' = <<"HandleAppendEntriesRequest: stale msg",
+                          i, j, m>>
                  /\ ScrSet(ScrIncSent)
             ELSE /\ BecomeFollower(i ,b.term) \* here serverVars has changed
                  /\ IF b.prevLogIndex > Len(log[i])
                     THEN /\ UNCHANGED <<logVars>>
                          /\ Reply(msg @@ ("body" :> rb1), m)
                          /\ ScrSet(ScrIncSent)
-                         /\ pc' = <<"HandleAppendEntriesRequest: would leave gap",
-                          i, j, m.seq>>
+                        \*  /\ pc' = <<"HandleAppendEntriesRequest: would leave gap",
+                        \*   i, j, m.seq>>
+                        /\ pc' = <<"HandleAppendEntriesRequest: would leave gap",
+                          i, j, m>>
                     ELSE IF /\ b.prevLogIndex > 0
                             /\ b.prevLogIndex <= Len(log[i])
                             /\ ~log[i][b.prevLogIndex].term = b.prevLogTerm
@@ -418,8 +422,10 @@ HandleAppendEntriesRequest(i, j, m) ==
                                                 success    |-> FALSE,
                                                 curIdx     |-> b.prevLogIndex - 1]  \* todo may have bugs
                                    IN Reply(msg @@("body") :> rb3, m)
+                                \* /\ pc' = <<"HandleAppendEntriesRequest: log mismatch",
+                                \*         i, j, m.seq>>
                                 /\ pc' = <<"HandleAppendEntriesRequest: log mismatch",
-                                        i, j, m.seq>>
+                                        i, j, m>>
                                 /\ ScrSet(ScrIncSent)
                          ELSE /\ IF Len(b.entries) = 0
                                  THEN UNCHANGED <<log>> \* if entries is null ,log doesn't change
@@ -438,8 +444,10 @@ HandleAppendEntriesRequest(i, j, m) ==
                                            ELSE Min({b.commitIndex} \union
                                                     {Max({Len(log'[i]), 1})})]
                               /\ Reply(msg @@ ("body" :> rb2), m)
+                            \*   /\ pc' = <<"HandleAppendEntriesRequest: success",
+                            \*            i, j, m.seq>>
                               /\ pc' = <<"HandleAppendEntriesRequest: success",
-                                       i, j, m.seq>>
+                                       i, j, m>>
                               /\ ScrSet(ScrIncSent)
         /\ UNCHANGED <<candidateVars, leaderVars>>
 
@@ -468,32 +476,40 @@ HandleAppendEntriesResponse(i, j, m) ==
     IN IF not_leader
        THEN /\ UNCHANGED <<serverVars, candidateVars, logVars, leaderVars, scr>>
             /\ Discard(m)
-            /\ pc' = <<"HandleAppendEntriesResponse: not leader", i , j, m.seq>>
+            \* /\ pc' = <<"HandleAppendEntriesResponse: not leader", i , j, m.seq>>
+            /\ pc' = <<"HandleAppendEntriesResponse: not leader", i , j, m>>
        ELSE IF demote
             THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars, scr>>
                  /\ Discard(m)
                  /\ BecomeFollower(i, b.term)
+                \*  /\ pc' = <<"HandleAppendEntriesResponse: demote",
+                \*           i, j, m.seq>>
                  /\ pc' = <<"HandleAppendEntriesResponse: demote",
-                          i, j, m.seq>>
+                          i, j, m>>
             ELSE IF stale_msg
                  THEN /\ Discard(m)
+                    \*   /\ pc' = <<"HandleAppendEntriesResponse: stale msg",
+                    \*             i, j, m.seq>>
                       /\ pc' = <<"HandleAppendEntriesResponse: stale msg",
-                                i, j, m.seq>>
-                      /\ UNCHANGED <<candidateVars, leaderVars, logVars, serverVars>>
+                                i, j, m>>
+                      /\ UNCHANGED <<candidateVars, leaderVars, logVars, serverVars, scr>>
                  ELSE IF retry
                       THEN /\ UNCHANGED <<serverVars, candidateVars, matchIndex,
                                           elections, logVars>>
                            /\ nextIndex' = [nextIndex EXCEPT ![i][j] = b.curIdx + 1]
                            /\ Reply(AppendEntriesHelper(i, j), m)
                            /\ ScrSet(ScrIncSent)
-                           /\ pc' = <<"HandleAppendEntriesResponse: mismatch and retry", i, j, m.seq>>
+                        \*    /\ pc' = <<"HandleAppendEntriesResponse: mismatch and retry", i, j, m.seq>>
+                           /\ pc' = <<"HandleAppendEntriesResponse: mismatch and retry", i, j, m>>
                       ELSE /\ UNCHANGED <<serverVars, candidateVars,
                                           elections, logVars, messages, scr>>
                            /\ nextIndex' = [ nextIndex EXCEPT ![i][j] = b.curIdx+1 ]
                            /\ matchIndex' = [ matchIndex EXCEPT ![i][j] = b.curIdx ]
                            /\ AdvanceCommitIdx(i, b.curIdx)
+                        \*    /\ pc' = <<"HandleAppendEntriesResponse: success",
+                        \*                   i, j, m.seq>>
                            /\ pc' = <<"HandleAppendEntriesResponse: success",
-                                          i, j, m.seq>>
+                                          i, j, m>>
 
 \* Leader i receives a client request to add v to the log.
 ClientRequest(i, v) ==
@@ -544,7 +560,9 @@ HandleRequestVoteRequest(i, j, m) ==
                        \/ body.term > currentTerm[i]
         canGrant    == /\ ~IsLeader(i)
                        /\ logOk
-                       /\ votedFor[i] \in {body.candidate, Nil}
+                       /\ body.term >= currentTerm[i]
+\*                       /\ votedFor[i] \in {body.candidate, Nil}
+                       /\ voteNil
         rb          == [ term |-> currentTerm'[i], voteGranted |-> canGrant ]
         stale_msg   == body.term < currentTerm[i]
         demote      == body.term > currentTerm[i]
@@ -556,13 +574,17 @@ HandleRequestVoteRequest(i, j, m) ==
        THEN /\ UNCHANGED <<serverVars, leaderVars, logVars, candidateVars>>
             /\ Reply(msg, m)
             /\ ScrSet(ScrIncSent)
+            \* /\ pc' = <<"HandleRequestVoteRequest: leader not granted",
+            \*                   i, j, m.seq>>
             /\ pc' = <<"HandleRequestVoteRequest: leader not granted",
-                              i, j, m.seq>>
+                              i, j, m>>
        ELSE IF stale_msg
             THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars, serverVars, scr>>
                  /\ Discard(m)
+                \*  /\ pc' = <<"HandleRequestVoteRequest: stale msg",
+                \*                 i, j, m.seq>>
                  /\ pc' = <<"HandleRequestVoteRequest: stale msg",
-                                i, j, m.seq>>
+                                i, j, m>>
             ELSE IF demote
                  THEN   /\ UNCHANGED <<leaderVars, logVars, candidateVars>>
                         /\ state'       = [ state       EXCEPT ![i] = Follower ]
@@ -572,10 +594,14 @@ HandleRequestVoteRequest(i, j, m) ==
                         /\ Reply(msg, m)
                         /\ ScrSet(ScrIncSent)
                         /\ IF canGrant
-                           THEN  pc' = <<"HandleRequestVoteRequest: demote and granted ",
-                                   i, j, m.seq>>
-                           ELSE  pc' = <<"HandleRequestVoteRequest: demote and not granted ",
-                                   i, j, m.seq>>
+                        \*    THEN  pc' = <<"HandleRequestVoteRequest: demote and granted ",
+                        \*            i, j, m.seq>>
+                              THEN  pc' = <<"HandleRequestVoteRequest: demote and granted ",
+                                   i, j, m>>
+                              ELSE  pc' = <<"HandleRequestVoteRequest: demote and not granted ",
+                                   i, j, m>>
+                            \* ELSE  pc' = <<"HandleRequestVoteRequest: demote and not granted ",
+                                \*    i, j, m.seq>>
                  ELSE IF canGrant
                       THEN  /\ UNCHANGED <<state, currentTerm, leaderVars, logVars, candidateVars>>
                             /\ votedFor' = [ votedFor  EXCEPT ![i] = IF canGrant
@@ -583,7 +609,9 @@ HandleRequestVoteRequest(i, j, m) ==
                             /\ Reply(msg, m)
                             /\ ScrSet(ScrIncSent)
                             /\ pc' = <<"HandleRequestVoteRequest: granted",
-                                   i, j, m.seq>>
+                                   i, j, m>>
+                            \* /\ pc' = <<"HandleRequestVoteRequest: granted",
+                            \*        i, j, m.seq>>
                       ELSE /\ UNCHANGED <<vars>>
                             
                             
@@ -604,12 +632,14 @@ HandleRequestVoteResponse(i, j, m) ==
                         [] notGranted   -> "HandleRequestVoteResponse: not granted"
                         [] OTHER        -> Assert(FALSE,
                            "HandleRequestVoteResponse unhandled CASE"),
-                      i, j, m.seq>>
+                      i, j, m>>
           ELSE IF currentTerm[i] < b.term
                THEN /\ UNCHANGED <<candidateVars, leaderVars, logVars, scr>>
                     /\ BecomeFollower(i, b.term)
                     /\ pc' = <<"HandleRequestVoteResponse: demote",
-                                  i, j, m.seq>>
+                                  i, j, m>>
+                    \* /\ pc' = <<"HandleRequestVoteResponse: demote",
+                    \*               i, j, m.seq>>
                ELSE /\ votesGranted' = [ votesGranted EXCEPT ![i] =
                                             @ \union {j}]
                     /\ IF IsQuorum(votesGranted'[i])
@@ -617,11 +647,15 @@ HandleRequestVoteResponse(i, j, m) ==
                             /\ BecomeLeader(i)
                             \* Note: sends append entries immediately
                             /\ ScrSet(LockArgs(i, {}, AppendEntriesRequest)) \* heart beat
+                            \* /\ pc' = <<"HandleRequestVoteResponse: promote",
+                            \*             i, j, m.seq>>
                             /\ pc' = <<"HandleRequestVoteResponse: promote",
-                                        i, j, m.seq>>
+                                        i, j, m>>
                        ELSE /\ UNCHANGED <<serverVars, leaderVars, logVars, scr>>
+                            \* /\ pc' = <<"HandleRequestVoteResponse: get vote",
+                            \*               i, j, m.seq>>
                             /\ pc' = <<"HandleRequestVoteResponse: get vote",
-                                          i, j, m.seq>>
+                                          i, j, m>>
     
     
 
@@ -706,8 +740,8 @@ Next ==
        \/ DoClientRequest
         \/ DoTimeout
         \/ DoRestart
-       \/ DoDrop
-       \/ DoDuplicate
+    \*    \/ DoDrop
+    \*    \/ DoDuplicate
         \/ DoLoop
 
 

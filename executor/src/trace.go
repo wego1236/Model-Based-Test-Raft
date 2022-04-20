@@ -37,13 +37,42 @@ type Raft_state struct {
 	log       []string
 }
 
+func (state *Raft_state) GetState() string {
+	return state.state
+}
+
+func (state *Raft_state) GetTerm() int {
+	return state.term
+}
+
+func (state *Raft_state) GetCommit() int {
+	return state.commit
+}
+
+func (state *Raft_state) GetLog() []string {
+	return state.log
+}
+
+//func (state *Raft_state) GetTerm() int{
+//	return state.term
+//}
+//
+//func (state *Raft_state) GetTerm() int{
+//	return state.term
+//}
+
 type Trace struct {
 	Type   int
 	States []*Raft_state
 	Server int
 	Peer   int
-	MsgSeq int
+	MsgSeq string
+	Data   string
 }
+
+//func (trace *Trace) getStateRole{
+//	return trace.States.
+//}
 
 // read token load Trace.state
 func (trace *Trace) loadState(token string) {
@@ -51,7 +80,6 @@ func (trace *Trace) loadState(token string) {
 	n_server := len(server_states)
 	for _, server_state := range server_states {
 		values := strings.Split(server_state, " ")
-		// fmt.Printf("%+v\n", values)
 		var tmpState Raft_state
 		tmpState.state = values[0]
 		tmpState.term, _ = strconv.Atoi(values[1])
@@ -71,11 +99,31 @@ func (trace *Trace) loadState(token string) {
 				tmpState.match_idx = append(tmpState.match_idx, n)
 			}
 		}
-		for i++; i < len(values); i++ {
+		i++
+		for ; i < len(values)-1; i++ { // because last word is space , so
 			tmpState.log = append(tmpState.log, values[i])
 		}
 		trace.States = append(trace.States, &tmpState)
 	}
+}
+
+func (trace *Trace) loadMsgData(token string) {
+	//fmt.Printf("%v\n", token)
+	msgData := strings.Split(token, " ")
+	var hashInfo string
+	if msgData[0] == "RequestVoteRequest" {
+		hashInfo += "Raft.RequestVote"
+	} else if msgData[0] == "RequestVoteResponse" {
+		hashInfo += "Raft.RequestVoteResponse"
+	} else if msgData[0] == "AppendEntriesRequest" {
+		hashInfo += "Raft.AppendEntries"
+	} else if msgData[0] == "AppendEntriesResponse" {
+		hashInfo += "Raft.AppendEntriesResponse"
+	}
+	hashInfo += msgData[1]
+	hashInfo += msgData[2]
+	hashInfo += msgData[3]
+	trace.MsgSeq = hashInfo
 }
 
 // show Trace.state
@@ -88,5 +136,5 @@ func (trace *Trace) show() {
 	for _, state := range trace.States {
 		state.show()
 	}
-	fmt.Println("type", Trace_type[trace.Type])
+	//fmt.Println("type", Trace_type[trace.Type])
 }

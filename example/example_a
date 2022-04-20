@@ -1,0 +1,32 @@
+2022/04/20 10:21:29 init, num of server: 3
+2022/04/20 10:21:29 restart, server: 0
+2022/04/20 10:21:29 election_timeout, server_number: 0, server_term 0
+msg add Raft.RequestVote102
+msg add Raft.RequestVote101
+2022/04/20 10:21:29 handle, msgs: Raft.RequestVote102
+msg add Raft.RequestVoteResponse120
+2022/04/20 10:21:29 election_timeout, server_number: 2, server_term 1
+msg add Raft.RequestVote221
+msg add Raft.RequestVote220
+2022/04/20 10:21:29 restart, server: 1
+2022/04/20 10:21:29 restart, server: 2
+2022/04/20 10:21:29 handle, msgs: Raft.RequestVote101
+msg add Raft.RequestVoteResponse110
+2022/04/20 10:21:29 handleresponse, msgs: Raft.RequestVoteResponse110
+msg add Raft.AppendEntries102
+msg add Raft.AppendEntries101
+2022/04/20 10:21:29 handleresponse, msgs: Raft.RequestVoteResponse120
+2022/04/20 10:21:29 election_timeout, server_number: 2, server_term 2
+msg add Raft.RequestVote321
+msg add Raft.RequestVote320
+2022/04/20 10:21:29 heart_beat, server_number: 0
+msg add Raft.AppendEntries102
+msg add Raft.AppendEntries101
+2022/04/20 10:21:29 handle, msgs: Raft.RequestVote321
+msg add Raft.RequestVoteResponse312
+2022/04/20 10:21:29 handleresponse, msgs: Raft.RequestVoteResponse312
+msg add Raft.AppendEntries321
+msg add Raft.AppendEntries320
+2022/04/20 10:21:29 role not right, wrong server: 2
+panic: role not right, wrong server: 2
+

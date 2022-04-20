@@ -89,6 +89,15 @@ def _n_server(s): return len(s['state'])
 def _msg(s): return _server_info(s, 'messages')[_msg_seq(s)]
 def _client_cmd(s): return _log(s)[-1]['value']
 
+#only need term,from,to,type
+def _msg_data(s):
+    l = []
+    msg = _pc_field(s, 3)
+    _type = msg['type']
+    _from = msg['from']  # because we know this from
+    _to = msg['to']
+    _term = msg['body']['term']
+    return str(_type) + " "+ str(_term)+ " " + str(_from) +" "+ str(_to) 
 
 _action_dict = {
     'Continue':                    'TRACE_NIL',
@@ -121,12 +130,12 @@ _callback_dict = {
     'AppendEntriesAll':            (_action, _states, _server, ),
     'Restart':                     (_action, _states, _server, ),
     'FinishLoop':                  (_action, _states, ),
-    'DoLoop':                      (_action, _states, _server, _peer, _msg_seq, _nil),
-    'HandleRequestVoteRequest':    (_action, _states, _server, _peer, _msg_seq, _nil),
-    'HandleRequestVoteResponse':   (_action, _states, _server, _peer, _msg_seq),
-    'HandleAppendEntriesRequest':  (_action, _states, _server, _peer, _msg_seq, _nil),
-    'HandleAppendEntriesResponse': (_action, _states, _server, _peer, _msg_seq, _nil),
-    'HandleSnapshotRequest':       (_action, _states, _server, _peer, _msg_seq, _nil),
+    'DoLoop':                      (_action, _states, _server, _peer, _nil, _nil),
+    'HandleRequestVoteRequest':    (_action, _states, _server, _peer, _msg_data, _nil),
+    'HandleRequestVoteResponse':   (_action, _states, _server, _peer, _msg_data, _nil),
+    'HandleAppendEntriesRequest':  (_action, _states, _server, _peer, _msg_data, _nil),
+    'HandleAppendEntriesResponse': (_action, _states, _server, _peer, _msg_data, _nil),
+    'HandleSnapshotRequest':       (_action, _states, _server, _peer, _msg_data, _nil),
     'ExecSnapshot':                (_action, _states, _server, ),
     'ClientRequest':               (_action, _states, _server, _nil,  _nil,     _client_cmd),
     'Drop':                        (_action, _states, _nil,    _nil,  _msg_seq),

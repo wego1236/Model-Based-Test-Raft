@@ -88,12 +88,8 @@ leaderVars == <<nextIndex, matchIndex, elections>>
 \* End of per server variables.
 ----
 
-\* watch over the transition, now i have only figured out pc
-VARIABLE pc
-
-
 \* All variables; used for stuttering (asserting state hasn't changed).
-vars == <<messages, allLogs, serverVars, candidateVars, leaderVars, logVars, pc>>
+vars == <<messages, allLogs, serverVars, candidateVars, leaderVars, logVars>>
 
 ----
 \* Helpers
@@ -107,12 +103,19 @@ LastTerm(xlog) == IF Len(xlog) = 0 THEN 0 ELSE xlog[Len(xlog)].term
 
 \* Helper for Send and Reply. Given a message m and bag of messages, return a
 \* new bag of messages with one more m in it.
-WithMessage(m, msgs) == msgs \union {m}
+WithMessage(m, msgs) ==
+    IF m \in DOMAIN msgs THEN
+        [msgs EXCEPT ![m] = msgs[m] + 1]
+    ELSE
+        msgs @@ (m :> 1)
 
 \* Helper for Discard and Reply. Given a message m and bag of messages, return
 \* a new bag of messages with one less m in it.
 WithoutMessage(m, msgs) ==
-    IF m \in msgs THEN msgs \ {m} ELSE msgs
+    IF m \in DOMAIN msgs THEN
+        [msgs EXCEPT ![m] = msgs[m] - 1]
+    ELSE
+        msgs
 
 \* Add a message to the bag of messages.
 Send(m) == messages' = WithMessage(m, messages)
@@ -148,13 +151,11 @@ InitLeaderVars == /\ nextIndex  = [i \in Server |-> [j \in Server |-> 1]]
                   /\ matchIndex = [i \in Server |-> [j \in Server |-> 0]]
 InitLogVars == /\ log          = [i \in Server |-> << >>]
                /\ commitIndex  = [i \in Server |-> 0]
-InitPc == pc = <<"Init">>
-Init == /\ messages = {}
+Init == /\ messages = [m \in {} |-> 0]
         /\ InitHistoryVars
         /\ InitServerVars
         /\ InitCandidateVars
         /\ InitLeaderVars
-        /\ InitPc
         /\ InitLogVars
 
 ----
@@ -170,7 +171,6 @@ Restart(i) ==
     /\ nextIndex'      = [nextIndex EXCEPT ![i] = [j \in Server |-> 1]]
     /\ matchIndex'     = [matchIndex EXCEPT ![i] = [j \in Server |-> 0]]
     /\ commitIndex'    = [commitIndex EXCEPT ![i] = 0]
-    /\ pc' = <<"Restart", i>>
     /\ UNCHANGED <<messages, currentTerm, votedFor, log, elections>>
 
 \* Server i times out and starts a new election.
@@ -183,20 +183,18 @@ Timeout(i) == /\ state[i] \in {Follower, Candidate}
               /\ votesResponded' = [votesResponded EXCEPT ![i] = {}]
               /\ votesGranted'   = [votesGranted EXCEPT ![i] = {}]
               /\ voterLog'       = [voterLog EXCEPT ![i] = [j \in {} |-> <<>>]]
-              /\ pc' = <<"TimeOut", i>>
               /\ UNCHANGED <<messages, leaderVars, logVars>>
 
 \* Candidate i sends j a RequestVote request.
 RequestVote(i, j) ==
     /\ state[i] = Candidate
-    /\ j \notin votesResponded[i]  
+    /\ j \notin votesResponded[i]
     /\ Send([mtype         |-> RequestVoteRequest,
              mterm         |-> currentTerm[i],
              mlastLogTerm  |-> LastTerm(log[i]),
              mlastLogIndex |-> Len(log[i]),
              msource       |-> i,
              mdest         |-> j])
-    /\ pc' = <<"RequestVote", i, j>>
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 \* Leader i sends j an AppendEntries request containing up to 1 entry.
@@ -224,7 +222,6 @@ AppendEntries(i, j) ==
                 mcommitIndex   |-> Min({commitIndex[i], lastEntry}),
                 msource        |-> i,
                 mdest          |-> j])
-    /\ pc' = <<"AppendEntries", i, j>>
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 \* Candidate i transitions to leader.
@@ -242,7 +239,6 @@ BecomeLeader(i) ==
                            elog      |-> log[i],
                            evotes    |-> votesGranted[i],
                            evoterLog |-> voterLog[i]]}
-    /\ pc' = <<"BecomeLeader", i>>
     /\ UNCHANGED <<messages, currentTerm, votedFor, candidateVars, logVars>>
 
 \* Leader i receives a client request to add v to the log.
@@ -252,7 +248,6 @@ ClientRequest(i, v) ==
                      value |-> v]
            newLog == Append(log[i], entry)
        IN  log' = [log EXCEPT ![i] = newLog]
-    /\ pc' = <<"ClientRequest", i, v>>
     /\ UNCHANGED <<messages, serverVars, candidateVars,
                    leaderVars, commitIndex>>
 
@@ -277,7 +272,6 @@ AdvanceCommitIndex(i) ==
               ELSE
                   commitIndex[i]
        IN commitIndex' = [commitIndex EXCEPT ![i] = newCommitIndex]
-    /\ pc' = <<"AdvanceCommitIndex", i>>
     /\ UNCHANGED <<messages, serverVars, candidateVars, leaderVars, log>>
 
 ----
@@ -305,7 +299,6 @@ HandleRequestVoteRequest(i, j, m) ==
                  msource      |-> i,
                  mdest        |-> j],
                  m)
-       /\ pc' = <<"HandleRequestVoteRequest", i, j>>
        /\ UNCHANGED <<state, currentTerm, candidateVars, leaderVars, logVars>>
 
 \* Server i receives a RequestVote response from server j with
@@ -324,7 +317,6 @@ HandleRequestVoteResponse(i, j, m) ==
        \/ /\ ~m.mvoteGranted
           /\ UNCHANGED <<votesGranted, voterLog>>
     /\ Discard(m)
-    /\ pc' = <<"HandleRequestVoteResponse", i, j>>
     /\ UNCHANGED <<serverVars, votedFor, leaderVars, logVars>>
 
 \* Server i receives an AppendEntries request from server j with
@@ -393,7 +385,6 @@ HandleAppendEntriesRequest(i, j, m) ==
                        /\ log' = [log EXCEPT ![i] =
                                       Append(log[i], m.mentries[1])]
                        /\ UNCHANGED <<serverVars, commitIndex, messages>>
-       /\ pc' = <<"HandleAppendEntriesRequest", i, j>>
        /\ UNCHANGED <<candidateVars, leaderVars>>
 
 \* Server i receives an AppendEntries response from server j with
@@ -408,23 +399,20 @@ HandleAppendEntriesResponse(i, j, m) ==
                                Max({nextIndex[i][j] - 1, 1})]
           /\ UNCHANGED <<matchIndex>>
     /\ Discard(m)
-    /\ pc' = <<"HandleAppendEntriesResponse", i, j>>
     /\ UNCHANGED <<serverVars, candidateVars, logVars, elections>>
 
-\* Any Rpc with a newer term causes the recipient to advance its term first.
+\* Any RPC with a newer term causes the recipient to advance its term first.
 UpdateTerm(i, j, m) ==
     /\ m.mterm > currentTerm[i]
     /\ currentTerm'    = [currentTerm EXCEPT ![i] = m.mterm]
     /\ state'          = [state       EXCEPT ![i] = Follower]
     /\ votedFor'       = [votedFor    EXCEPT ![i] = Nil]
-    /\ pc' = <<"UpdateTerm", i, j, m.mterm>>
        \* messages is unchanged so m can be processed further.
     /\ UNCHANGED <<messages, candidateVars, leaderVars, logVars>>
 
 \* Responses with stale terms are ignored.
 DropStaleResponse(i, j, m) ==
     /\ m.mterm < currentTerm[i]
-    /\ pc' = <<"DropStaleResponse">>
     /\ Discard(m)
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
@@ -432,7 +420,7 @@ DropStaleResponse(i, j, m) ==
 Receive(m) ==
     LET i == m.mdest
         j == m.msource
-    IN \* Any Rpc' with a newer term causes the recipient to advance
+    IN \* Any RPC with a newer term causes the recipient to advance
        \* its term first. Responses with stale terms are ignored.
        \/ UpdateTerm(i, j, m)
        \/ /\ m.mtype = RequestVoteRequest
@@ -453,13 +441,11 @@ Receive(m) ==
 \* The network duplicates a message
 DuplicateMessage(m) ==
     /\ Send(m)
-    /\ pc' = <<"NetDuplicate",m>>
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 \* The network drops a message
 DropMessage(m) ==
     /\ Discard(m)
-    /\ pc' = <<"NetDropMessage", m>>
     /\ UNCHANGED <<serverVars, candidateVars, leaderVars, logVars>>
 
 ----
@@ -471,9 +457,9 @@ Next == /\ \/ \E i \in Server : Restart(i)
            \/ \E i \in Server, v \in Value : ClientRequest(i, v)
            \/ \E i \in Server : AdvanceCommitIndex(i)
            \/ \E i,j \in Server : AppendEntries(i, j)
-           \/ \E m \in messages : Receive(m)
-        \*    \/ \E m \in messages : DuplicateMessage(m)
-        \*    \/ \E m \in messages : DropMessage(m)
+           \/ \E m \in DOMAIN messages : Receive(m)
+           \/ \E m \in DOMAIN messages : DuplicateMessage(m)
+           \/ \E m \in DOMAIN messages : DropMessage(m)
            \* History variable that tracks every log ever:
         /\ allLogs' = allLogs \cup {log[i] : i \in Server}
 
@@ -497,10 +483,3 @@ Spec == Init /\ [][Next]_vars
 \*
 \* 2014-07-06:
 \* - Version from PhD dissertation
-
-
-
-
-
-
-

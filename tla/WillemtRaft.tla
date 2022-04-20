@@ -892,7 +892,7 @@ HandleAppendEntriesResponse(i, j, m) ==
                                 snapshotVars>>
                  /\ Discard(m)
                  /\ BecomeFollower(i, b.term)
-                 /\ ScrSet(ScrIncRecvUnorder(m),
+                 /\ ScrSet(ScrIncRecvUnoderder(m),
                         <<"HandleAppendEntriesResponse: demote",
                           i, j, m.seq, Nil, FALSE>>)
             ELSE IF stale_msg

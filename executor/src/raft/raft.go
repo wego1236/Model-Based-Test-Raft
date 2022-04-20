@@ -218,6 +218,8 @@ type RequestVoteArgs struct {
 	CandidateID  int //candidate requesting vote
 	LastLogIndex int //index of candidate's last log entry
 	LastLogTerm  int //term of candidate's last log entry
+	From         int
+	To           int
 }
 
 //
@@ -228,6 +230,8 @@ type RequestVoteReply struct {
 	// Your data here (2A).
 	Term        int  // currentTerm, for candidate to update itself
 	VoteGranted bool // true means candidate received vote
+	From        int
+	To          int
 }
 
 //
@@ -395,6 +399,7 @@ func (rf *Raft) getLastLogTermIndex() (int, int) {
 	}
 	term := rf.logs[len(rf.logs)-1].Term // the last term
 	index := len(rf.logs) - 1
+
 	return term, index
 }
 
@@ -424,6 +429,42 @@ func (rf *Raft) tick() {
 	}
 }
 
+func (rf *Raft) Get_Id() int {
+	return rf.me
+}
+
+func (rf *Raft) Get_Term() int {
+	return rf.currentTerm
+}
+
+func (rf *Raft) Get_Log() []LogEntry {
+	return rf.logs
+}
+
+func (rf *Raft) Get_Role() string {
+	switch rf.role {
+	case Leader:
+		return "L"
+	case Follower:
+		return "F"
+	case Candidate:
+		return "C"
+	}
+	return ""
+}
+
+func (rf *Raft) GetAllLog() []string {
+	var allLog []string
+	//allLog = make([]string, 0)
+	for _, v := range rf.logs {
+		if v.Command != nil {
+			allLog = append(allLog, v.Command.(string))
+		}
+
+	}
+	return allLog
+}
+
 // electiontimer 到时 会触发的函数， 进行选举
 func (rf *Raft) StartElection() {
 	rf.lock("startElection1")
@@ -446,6 +487,7 @@ func (rf *Raft) StartElection() {
 		CandidateID:  rf.me,
 		LastLogIndex: lastIndex,
 		LastLogTerm:  LastTerm,
+		From:         rf.me,
 	}
 	rf.unLock("startElection2")
 
@@ -456,11 +498,14 @@ func (rf *Raft) StartElection() {
 		if i == rf.me {
 			continue
 		}
-
+		args.To = i
+		// change go fund to func ,can not
+		// because channel wait
 		go func(index int, args RequestVoteArgs) { //
 			reply := RequestVoteReply{}
 			//may have problems
 			ok := rf.sendRequestVote(index, &args, &reply)
+			//time.Sleep(5 * time.Millisecond)
 			if ok { // send success
 				// if reply.Term != rf.currentTerm {
 				// 	panic("reply term is not same as the sender")
@@ -479,7 +524,7 @@ func randElectionTimeout() time.Duration {
 		DPrintf("election time out rand wrong, err : %v", err)
 	}
 	res := ElectionTimeout + time.Duration(r.Int64()*100)%ElectionTimeout
-	DPrintf("rand election timeout : %v", res)
+	//DPrintf("rand election timeout : %v", res)
 	return res
 }
 
@@ -502,7 +547,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 	rf.me = me
 	rf.applyCh = applyCh
 	rf.test = test
-	DPrintf("%d make", rf.me)
+	//DPrintf("%d make", rf.me)
 	// Your initialization code here (2A, 2B, 2C).
 
 	rf.role = Follower

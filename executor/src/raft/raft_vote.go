@@ -8,6 +8,8 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	lastLogTerm, lastLogIndex := rf.getLastLogTermIndex()
 	reply.Term = rf.currentTerm
 	reply.VoteGranted = false
+	reply.From = rf.me
+	reply.To = args.From
 
 	defer rf.persist()
 	//raft 5.4 have given what's new
@@ -114,7 +116,8 @@ func (rf *Raft) handleVoteResult(reply RequestVoteReply) {
 			rf.changeRole(Leader)
 			// go rf.leaderAnounce()
 			//开始可以将自己的log复制给其他人
-			go rf.tick()
+			//go rf.tick()  //todo need turn back
+			go rf.Replicate()
 		}
 
 	} else if rf.role == Leader && reply.VoteGranted {

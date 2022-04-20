@@ -553,14 +553,14 @@ BecomeCandidate(i) ==
 
 HandleRequestVoteRequest(i, j, m) ==
     LET body        == m.body
-        logOk       ==  \/ body.lastLogTerm > LastTerm(log[i])
-                        \/ /\ body.lastLogTerm = LastTerm(log[i])
-                           /\ body.lastLogIdx >= Len(log[i])
+        logOk       ==  \/ body.lastLogTerm > LastTerm(log'[i])
+                        \/ /\ body.lastLogTerm = LastTerm(log'[i])
+                           /\ body.lastLogIdx >= Len(log'[i])
         voteNil     == \/ votedFor[i] = Nil
                        \/ body.term > currentTerm[i]
         canGrant    == /\ ~IsLeader(i)
                        /\ logOk
-                       /\ body.term >= currentTerm[i]
+                       /\ body.term >= currentTerm'[i]
 \*                       /\ votedFor[i] \in {body.candidate, Nil}
                        /\ voteNil
         rb          == [ term |-> currentTerm'[i], voteGranted |-> canGrant ]

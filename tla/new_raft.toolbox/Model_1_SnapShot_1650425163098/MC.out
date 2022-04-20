@@ -1,0 +1,1865 @@
+@!@!@STARTMSG 2262:0 @!@!@
+TLC2 Version 2.16 of 31 December 2020 (rev: cdddf55)
+@!@!@ENDMSG 2262 @!@!@
+@!@!@STARTMSG 2187:0 @!@!@
+Running breadth-first search Model-Checking with fp 104 and seed 642539996158532004 with 4 workers on 8 cores with 1177MB heap and 2646MB offheap memory [pid: 11257] (Linux 5.4.0-105-generic amd64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
+@!@!@ENDMSG 2187 @!@!@
+@!@!@STARTMSG 2220:0 @!@!@
+Starting SANY...
+@!@!@ENDMSG 2220 @!@!@
+Parsing file /home/wego/modle_based_test_raft/tla/new_raft.toolbox/Model_1/MC.tla
+Parsing file /home/wego/modle_based_test_raft/tla/new_raft.toolbox/Model_1/new_raft.tla
+Parsing file /opt/TLA+Toolbox/plugins/org.lamport.tlatools_1.0.0.202012311918/tla2sany/StandardModules/TLC.tla
+Parsing file /opt/TLA+Toolbox/plugins/org.lamport.tlatools_1.0.0.202012311918/tla2sany/StandardModules/Naturals.tla
+Parsing file /opt/TLA+Toolbox/plugins/org.lamport.tlatools_1.0.0.202012311918/tla2sany/StandardModules/FiniteSets.tla
+Parsing file /opt/TLA+Toolbox/plugins/org.lamport.tlatools_1.0.0.202012311918/tla2sany/StandardModules/Sequences.tla
+Semantic processing of module Naturals
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module new_raft
+Semantic processing of module MC
+@!@!@STARTMSG 2219:0 @!@!@
+SANY finished.
+@!@!@ENDMSG 2219 @!@!@
+@!@!@STARTMSG 2185:0 @!@!@
+Starting... (2022-04-20 11:26:01)
+@!@!@ENDMSG 2185 @!@!@
+@!@!@STARTMSG 2189:0 @!@!@
+Computing initial states...
+@!@!@ENDMSG 2189 @!@!@
+@!@!@STARTMSG 2190:0 @!@!@
+Finished computing initial states: 1 distinct state generated at 2022-04-20 11:26:02.
+@!@!@ENDMSG 2190 @!@!@
+@!@!@STARTMSG 1000:1 @!@!@
+TLC threw an unexpected exception.
+This was probably caused by an error in the spec or model.
+See the User Output or TLC Console for clues to what happened.
+The exception was a java.lang.RuntimeException
+: @!@!@STARTMSG 2280:0 @!@!@
+In evaluation, the identifier log is either undefined or not an operator.
+line 556, col 56 to line 556, col 58 of module new_raft
+@!@!@ENDMSG 2280 @!@!@
+@!@!@ENDMSG 1000 @!@!@
+@!@!@STARTMSG 2121:1 @!@!@
+The behavior up to this point is:
+@!@!@ENDMSG 2121 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+1: <Initial predicate>
+/\ elections = {}
+/\ messages = {}
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Init">>
+/\ state = (s1 :> Follower @@ s2 :> Follower @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {} @@ s2 :> {} @@ s3 :> {})
+/\ scr = [nSent |-> 0, lock |-> Nil]
+/\ votedFor = (s1 :> Nil @@ s2 :> Nil @@ s3 :> Nil)
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+2: <DoTimeout line 705, col 36 to line 706, col 46 of module new_raft>
+/\ elections = {}
+/\ messages = {}
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Timeout: election", s1>>
+/\ state = (s1 :> Candidate @@ s2 :> Follower @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 0 @@ s3 :> 0)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {s1} @@ s2 :> {} @@ s3 :> {})
+/\ scr = [ nSent |-> 0,
+  lock |->
+      [ type |-> RequestVoteRequest,
+        args |-> {[from |-> s1, to |-> s2], [from |-> s1, to |-> s3]} ] ]
+/\ votedFor = (s1 :> s1 @@ s2 :> Nil @@ s3 :> Nil)
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+3: <DoLoop line 714, col 11 to line 731, col 56 of module new_raft>
+/\ elections = {}
+/\ messages = { [ type |-> RequestVoteRequest,
+    from |-> s1,
+    to |-> s2,
+    body |->
+        [term |-> 1, candidate |-> s1, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 1 ] }
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"DoLoop: RequestVote", s1, s2, 1>>
+/\ state = (s1 :> Candidate @@ s2 :> Follower @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 0 @@ s3 :> 0)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {s1} @@ s2 :> {} @@ s3 :> {})
+/\ scr = [ nSent |-> 1,
+  lock |-> [type |-> RequestVoteRequest, args |-> {[from |-> s1, to |-> s3]}] ]
+/\ votedFor = (s1 :> s1 @@ s2 :> Nil @@ s3 :> Nil)
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+4: <DoLoop line 714, col 11 to line 731, col 56 of module new_raft>
+/\ elections = {}
+/\ messages = { [ type |-> RequestVoteRequest,
+    from |-> s1,
+    to |-> s2,
+    body |->
+        [term |-> 1, candidate |-> s1, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 1 ],
+  [ type |-> RequestVoteRequest,
+    from |-> s1,
+    to |-> s3,
+    body |->
+        [term |-> 1, candidate |-> s1, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 2 ] }
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"DoLoop: RequestVote", s1, s3, 2>>
+/\ state = (s1 :> Candidate @@ s2 :> Follower @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 0 @@ s3 :> 0)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {s1} @@ s2 :> {} @@ s3 :> {})
+/\ scr = [nSent |-> 2, lock |-> Nil]
+/\ votedFor = (s1 :> s1 @@ s2 :> Nil @@ s3 :> Nil)
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+5: <DoTimeout line 705, col 36 to line 706, col 46 of module new_raft>
+/\ elections = {}
+/\ messages = { [ type |-> RequestVoteRequest,
+    from |-> s1,
+    to |-> s2,
+    body |->
+        [term |-> 1, candidate |-> s1, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 1 ],
+  [ type |-> RequestVoteRequest,
+    from |-> s1,
+    to |-> s3,
+    body |->
+        [term |-> 1, candidate |-> s1, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 2 ] }
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"Timeout: election", s2>>
+/\ state = (s1 :> Candidate @@ s2 :> Candidate @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 0)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {s1} @@ s2 :> {s2} @@ s3 :> {})
+/\ scr = [ nSent |-> 2,
+  lock |->
+      [ type |-> RequestVoteRequest,
+        args |-> {[from |-> s2, to |-> s1], [from |-> s2, to |-> s3]} ] ]
+/\ votedFor = (s1 :> s1 @@ s2 :> s2 @@ s3 :> Nil)
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+6: <DoLoop line 714, col 11 to line 731, col 56 of module new_raft>
+/\ elections = {}
+/\ messages = { [ type |-> RequestVoteRequest,
+    from |-> s1,
+    to |-> s2,
+    body |->
+        [term |-> 1, candidate |-> s1, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 1 ],
+  [ type |-> RequestVoteRequest,
+    from |-> s1,
+    to |-> s3,
+    body |->
+        [term |-> 1, candidate |-> s1, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 2 ],
+  [ type |-> RequestVoteRequest,
+    from |-> s2,
+    to |-> s1,
+    body |->
+        [term |-> 1, candidate |-> s2, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 3 ] }
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"DoLoop: RequestVote", s2, s1, 3>>
+/\ state = (s1 :> Candidate @@ s2 :> Candidate @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 0)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {s1} @@ s2 :> {s2} @@ s3 :> {})
+/\ scr = [ nSent |-> 3,
+  lock |-> [type |-> RequestVoteRequest, args |-> {[from |-> s2, to |-> s3]}] ]
+/\ votedFor = (s1 :> s1 @@ s2 :> s2 @@ s3 :> Nil)
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+7: <DoLoop line 714, col 11 to line 731, col 56 of module new_raft>
+/\ elections = {}
+/\ messages = { [ type |-> RequestVoteRequest,
+    from |-> s1,
+    to |-> s2,
+    body |->
+        [term |-> 1, candidate |-> s1, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 1 ],
+  [ type |-> RequestVoteRequest,
+    from |-> s1,
+    to |-> s3,
+    body |->
+        [term |-> 1, candidate |-> s1, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 2 ],
+  [ type |-> RequestVoteRequest,
+    from |-> s2,
+    to |-> s1,
+    body |->
+        [term |-> 1, candidate |-> s2, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 3 ],
+  [ type |-> RequestVoteRequest,
+    from |-> s2,
+    to |-> s3,
+    body |->
+        [term |-> 1, candidate |-> s2, lastLogIdx |-> 0, lastLogTerm |-> 0],
+    seq |-> 4 ] }
+/\ matchIndex = ( s1 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s2 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) @@
+  s3 :> (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0) )
+/\ log = (s1 :> <<>> @@ s2 :> <<>> @@ s3 :> <<>>)
+/\ pc = <<"DoLoop: RequestVote", s2, s3, 4>>
+/\ state = (s1 :> Candidate @@ s2 :> Candidate @@ s3 :> Follower)
+/\ commitIndex = (s1 :> 0 @@ s2 :> 0 @@ s3 :> 0)
+/\ currentTerm = (s1 :> 1 @@ s2 :> 1 @@ s3 :> 0)
+/\ nextIndex = ( s1 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s2 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) @@
+  s3 :> (s1 :> 1 @@ s2 :> 1 @@ s3 :> 1) )
+/\ votesGranted = (s1 :> {s1} @@ s2 :> {s2} @@ s3 :> {})
+/\ scr = [nSent |-> 4, lock |-> Nil]
+/\ votedFor = (s1 :> s1 @@ s2 :> s2 @@ s3 :> Nil)
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2103:1 @!@!@
+The error occurred when TLC was evaluating the nested
+expressions at the following positions:
+0. Line 697, column 36 to line 698, column 80 in new_raft
+1. Line 697, column 36 to line 697, column 47 in new_raft
+2. Line 158, column 28 to line 158, column 42 in new_raft
+3. Line 697, column 52 to line 698, column 80 in new_raft
+4. Line 698, column 37 to line 698, column 80 in new_raft
+5. Line 698, column 37 to line 698, column 63 in new_raft
+6. Line 698, column 71 to line 698, column 80 in new_raft
+7. Line 668, column 5 to line 676, column 42 in new_raft
+8. Line 671, column 9 to line 676, column 42 in new_raft
+9. Line 671, column 12 to line 675, column 63 in new_raft
+10. Line 673, column 45 to line 673, column 80 in new_raft
+11. Line 555, column 5 to line 615, column 48 in new_raft
+12. Line 573, column 8 to line 615, column 48 in new_raft
+13. Line 581, column 13 to line 615, column 48 in new_raft
+14. Line 588, column 18 to line 615, column 48 in new_raft
+15. Line 605, column 23 to line 615, column 48 in new_raft
+16. Line 605, column 26 to line 605, column 33 in new_raft
+17. Line 561, column 24 to line 565, column 33 in new_raft
+18. Line 562, column 27 to line 562, column 31 in new_raft
+19. Line 556, column 25 to line 558, column 61 in new_raft
+20. Line 556, column 28 to line 556, column 63 in new_raft
+21. Line 556, column 47 to line 556, column 63 in new_raft
+22. Line 118, column 19 to line 118, column 67 in new_raft
+23. Line 118, column 22 to line 118, column 34 in new_raft
+24. Line 118, column 22 to line 118, column 30 in new_raft
+25. Line 118, column 26 to line 118, column 29 in new_raft
+26. Line 556, column 56 to line 556, column 62 in new_raft
+27. Line 556, column 56 to line 556, column 59 in new_raft
+28. Line 556, column 56 to line 556, column 58 in new_raft
+
+
+@!@!@ENDMSG 2103 @!@!@
+@!@!@STARTMSG 2201:0 @!@!@
+The coverage statistics at 2022-04-20 11:26:02
+@!@!@ENDMSG 2201 @!@!@
+@!@!@STARTMSG 2773:0 @!@!@
+<Init line 305, col 1 to line 305, col 4 of module new_raft>: 2:2
+@!@!@ENDMSG 2773 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 305, col 9 to line 312, col 19 of module new_raft: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<DoHandleAppendEntriesRequest line 693, col 1 to line 693, col 28 of module new_raft>: 0:0
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 693, col 36 to line 693, col 47 of module new_raft: 67
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 694, col 37 to line 694, col 65 of module new_raft: 67
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 400, col 21 to line 400, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 404, col 20 to line 405, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 409, col 29 to line 409, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 414, col 28 to line 415, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 420, col 36 to line 420, col 56 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 427, col 36 to line 428, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 431, col 39 to line 431, col 55 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 436, col 45 to line 436, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 441, col 34 to line 445, col 78 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 449, col 34 to line 450, col 48 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 452, col 12 to line 452, col 50 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 477, col 16 to line 477, col 80 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 480, col 16 to line 480, col 76 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 482, col 21 to line 482, col 73 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 487, col 21 to line 488, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 493, col 26 to line 494, col 41 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 495, col 26 to line 495, col 90 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 497, col 31 to line 498, col 62 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 499, col 31 to line 499, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 503, col 31 to line 503, col 98 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 504, col 31 to line 505, col 77 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 506, col 31 to line 506, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 507, col 31 to line 507, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 460, col 8 to line 460, col 79 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 511, col 31 to line 512, col 51 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 574, col 16 to line 574, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 579, col 16 to line 580, col 39 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 582, col 21 to line 582, col 85 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 586, col 21 to line 587, col 41 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 589, col 28 to line 589, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 590, col 28 to line 590, col 80 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 591, col 28 to line 591, col 81 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 592, col 28 to line 593, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 599, col 37 to line 600, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 601, col 37 to line 602, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 606, col 32 to line 606, col 99 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 607, col 32 to line 608, col 70 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 611, col 32 to line 612, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 615, col 31 to line 615, col 48 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 629, col 19 to line 629, col 82 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 630, col 19 to line 635, col 31 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 637, col 24 to line 637, col 76 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 639, col 24 to line 640, col 43 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 643, col 24 to line 644, col 57 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 646, col 32 to line 646, col 86 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 339, col 8 to line 339, col 52 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 340, col 8 to line 341, col 81 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 342, col 8 to line 342, col 71 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 652, col 32 to line 653, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 654, col 32 to line 654, col 81 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 657, col 32 to line 658, col 51 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 693, col 61 to line 693, col 68 of module new_raft: 33
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<DoHandleAppendEntriesResponse line 695, col 1 to line 695, col 29 of module new_raft>: 0:0
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 695, col 36 to line 695, col 47 of module new_raft: 67
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 696, col 37 to line 696, col 66 of module new_raft: 67
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 400, col 21 to line 400, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 404, col 20 to line 405, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 409, col 29 to line 409, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 414, col 28 to line 415, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 420, col 36 to line 420, col 56 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 427, col 36 to line 428, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 431, col 39 to line 431, col 55 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 436, col 45 to line 436, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 441, col 34 to line 445, col 78 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 449, col 34 to line 450, col 48 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 452, col 12 to line 452, col 50 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 477, col 16 to line 477, col 80 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 480, col 16 to line 480, col 76 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 482, col 21 to line 482, col 73 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 487, col 21 to line 488, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 493, col 26 to line 494, col 41 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 495, col 26 to line 495, col 90 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 497, col 31 to line 498, col 62 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 499, col 31 to line 499, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 503, col 31 to line 503, col 98 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 504, col 31 to line 505, col 77 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 506, col 31 to line 506, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 507, col 31 to line 507, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 460, col 8 to line 460, col 79 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 511, col 31 to line 512, col 51 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 574, col 16 to line 574, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 579, col 16 to line 580, col 39 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 582, col 21 to line 582, col 85 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 586, col 21 to line 587, col 41 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 589, col 28 to line 589, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 590, col 28 to line 590, col 80 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 591, col 28 to line 591, col 81 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 592, col 28 to line 593, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 599, col 37 to line 600, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 601, col 37 to line 602, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 606, col 32 to line 606, col 99 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 607, col 32 to line 608, col 70 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 611, col 32 to line 612, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 615, col 31 to line 615, col 48 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 629, col 19 to line 629, col 82 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 630, col 19 to line 635, col 31 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 637, col 24 to line 637, col 76 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 639, col 24 to line 640, col 43 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 643, col 24 to line 644, col 57 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 646, col 32 to line 646, col 86 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 339, col 8 to line 339, col 52 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 340, col 8 to line 341, col 81 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 342, col 8 to line 342, col 71 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 652, col 32 to line 653, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 654, col 32 to line 654, col 81 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 657, col 32 to line 658, col 51 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 695, col 61 to line 695, col 68 of module new_raft: 33
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<DoHandleRequestVoteRequest line 697, col 1 to line 697, col 26 of module new_raft>: 14:32
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 158, col 28 to line 158, col 42 of module new_raft: 88
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 158, col 28 to line 158, col 35 of module new_raft: 67
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 158, col 40 to line 158, col 42 of module new_raft: 67
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 698, col 37 to line 698, col 63 of module new_raft: 91
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 698, col 37 to line 698, col 42 of module new_raft: 59
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 698, col 46 to line 698, col 63 of module new_raft: 59
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 671, col 17 to line 671, col 40 of module new_raft: 35
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 400, col 21 to line 400, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 404, col 20 to line 405, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 409, col 29 to line 409, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 414, col 28 to line 415, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 420, col 36 to line 420, col 56 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 427, col 36 to line 428, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 431, col 39 to line 431, col 55 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 436, col 45 to line 436, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 441, col 34 to line 445, col 78 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 449, col 34 to line 450, col 48 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 452, col 12 to line 452, col 50 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 672, col 16 to line 672, col 40 of module new_raft: 35
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 477, col 16 to line 477, col 80 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 480, col 16 to line 480, col 76 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 482, col 21 to line 482, col 73 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 487, col 21 to line 488, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 493, col 26 to line 494, col 41 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 495, col 26 to line 495, col 90 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 497, col 31 to line 498, col 62 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 499, col 31 to line 499, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 503, col 31 to line 503, col 98 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 504, col 31 to line 505, col 77 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 506, col 31 to line 506, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 507, col 31 to line 507, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 460, col 8 to line 460, col 79 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 511, col 31 to line 512, col 51 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 673, col 16 to line 673, col 37 of module new_raft: 35
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 573, col 11 to line 573, col 21 of module new_raft: 35
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 574, col 16 to line 574, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 579, col 16 to line 580, col 39 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 581, col 16 to line 581, col 24 of module new_raft: 35
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 582, col 21 to line 582, col 85 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 586, col 21 to line 587, col 41 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 588, col 21 to line 588, col 26 of module new_raft: 35
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 589, col 28 to line 589, col 75 of module new_raft: 32
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 590, col 28 to line 590, col 80 of module new_raft: 32
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 591, col 28 to line 591, col 81 of module new_raft: 32
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 592, col 28 to line 593, col 72 of module new_raft: 32
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 594, col 28 to line 594, col 40 of module new_raft: 32
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 595, col 28 to line 595, col 45 of module new_raft: 32
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 596, col 31 to line 596, col 38 of module new_raft: 32
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 599, col 37 to line 600, col 44 of module new_raft: 32
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 601, col 37 to line 602, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 605, col 26 to line 605, col 33 of module new_raft: 3
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 606, col 32 to line 606, col 99 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 607, col 32 to line 608, col 70 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 611, col 32 to line 612, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 615, col 31 to line 615, col 48 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 673, col 73 to line 673, col 73 of module new_raft: 35
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 673, col 76 to line 673, col 76 of module new_raft: 32
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 673, col 79 to line 673, col 79 of module new_raft: 35
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 629, col 19 to line 629, col 82 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 630, col 19 to line 635, col 31 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 637, col 24 to line 637, col 76 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 639, col 24 to line 640, col 43 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 643, col 24 to line 644, col 57 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 646, col 32 to line 646, col 86 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 339, col 8 to line 339, col 52 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 340, col 8 to line 341, col 81 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 342, col 8 to line 342, col 71 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 652, col 32 to line 653, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 654, col 32 to line 654, col 81 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 657, col 32 to line 658, col 51 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 676, col 12 to line 676, col 42 of module new_raft: 32
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 698, col 79 to line 698, col 79 of module new_raft: 35
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 697, col 61 to line 697, col 68 of module new_raft: 33
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<DoHandleRequestVoteResponse line 699, col 1 to line 699, col 27 of module new_raft>: 8:24
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 158, col 28 to line 158, col 42 of module new_raft: 82
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 158, col 28 to line 158, col 35 of module new_raft: 64
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 158, col 40 to line 158, col 42 of module new_raft: 64
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 700, col 37 to line 700, col 64 of module new_raft: 79
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 700, col 37 to line 700, col 42 of module new_raft: 55
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 700, col 46 to line 700, col 64 of module new_raft: 55
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 671, col 17 to line 671, col 40 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 400, col 21 to line 400, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 404, col 20 to line 405, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 409, col 29 to line 409, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 414, col 28 to line 415, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 420, col 36 to line 420, col 56 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 427, col 36 to line 428, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 431, col 39 to line 431, col 55 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 436, col 45 to line 436, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 441, col 34 to line 445, col 78 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 449, col 34 to line 450, col 48 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 452, col 12 to line 452, col 50 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 672, col 16 to line 672, col 40 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 477, col 16 to line 477, col 80 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 480, col 16 to line 480, col 76 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 482, col 21 to line 482, col 73 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 487, col 21 to line 488, col 35 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 493, col 26 to line 494, col 41 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 495, col 26 to line 495, col 90 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 497, col 31 to line 498, col 62 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 499, col 31 to line 499, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 503, col 31 to line 503, col 98 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 504, col 31 to line 505, col 77 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 506, col 31 to line 506, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 507, col 31 to line 507, col 84 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 460, col 8 to line 460, col 79 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 511, col 31 to line 512, col 51 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 673, col 16 to line 673, col 37 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 574, col 16 to line 574, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 579, col 16 to line 580, col 39 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 582, col 21 to line 582, col 85 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 15 to line 138, col 53 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 586, col 21 to line 587, col 41 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 589, col 28 to line 589, col 75 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 590, col 28 to line 590, col 80 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 591, col 28 to line 591, col 81 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 592, col 28 to line 593, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 599, col 37 to line 600, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 601, col 37 to line 602, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 606, col 32 to line 606, col 99 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 607, col 32 to line 608, col 70 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 142, col 5 to line 142, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 611, col 32 to line 612, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 615, col 31 to line 615, col 48 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 674, col 16 to line 674, col 38 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 623, col 8 to line 623, col 17 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 628, col 14 to line 628, col 51 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 628, col 14 to line 628, col 37 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 628, col 14 to line 628, col 25 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 628, col 30 to line 628, col 37 of module new_raft: 14
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 628, col 42 to line 628, col 51 of module new_raft: 14
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 629, col 19 to line 629, col 82 of module new_raft: 10
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 630, col 19 to line 635, col 31 of module new_raft: 10
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 636, col 19 to line 636, col 41 of module new_raft: 14
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 637, col 24 to line 637, col 76 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 330, col 8 to line 331, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 332, col 8 to line 333, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 334, col 8 to line 335, col 72 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 639, col 24 to line 640, col 43 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 643, col 24 to line 644, col 57 of module new_raft: 14
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 645, col 27 to line 645, col 52 of module new_raft: 14
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 646, col 32 to line 646, col 86 of module new_raft: 14
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 647, col 32 to line 647, col 46 of module new_raft: 14
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 649, col 32 to line 649, col 76 of module new_raft: 14
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 652, col 32 to line 653, col 49 of module new_raft: 14
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 654, col 32 to line 654, col 81 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 657, col 32 to line 658, col 51 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 674, col 73 to line 674, col 73 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 674, col 76 to line 674, col 76 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 674, col 79 to line 674, col 79 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 676, col 12 to line 676, col 42 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 700, col 79 to line 700, col 79 of module new_raft: 24
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 699, col 61 to line 699, col 68 of module new_raft: 30
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<DoAppendEntriesAll line 701, col 1 to line 701, col 18 of module new_raft>: 0:0
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 701, col 36 to line 701, col 47 of module new_raft: 64
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 377, col 8 to line 377, col 77 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 378, col 8 to line 378, col 18 of module new_raft: 90
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 382, col 14 to line 382, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 702, col 54 to line 702, col 54 of module new_raft: 90
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 701, col 61 to line 701, col 66 of module new_raft: 30
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<DoClientRequest line 703, col 1 to line 703, col 15 of module new_raft>: 0:0
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 703, col 36 to line 703, col 47 of module new_raft: 64
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 516, col 8 to line 516, col 18 of module new_raft: 270
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 520, col 12 to line 520, col 44 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 521, col 8 to line 521, col 38 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 522, col 8 to line 523, col 49 of module new_raft: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 704, col 51 to line 704, col 51 of module new_raft: 270
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 703, col 61 to line 703, col 66 of module new_raft: 30
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 703, col 75 to line 703, col 79 of module new_raft: 30
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<DoTimeout line 705, col 1 to line 705, col 9 of module new_raft>: 27:90
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 158, col 28 to line 158, col 42 of module new_raft: 94
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 158, col 28 to line 158, col 35 of module new_raft: 64
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 158, col 40 to line 158, col 42 of module new_raft: 64
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 663, col 18 to line 663, col 29 of module new_raft: 180
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 663, col 19 to line 663, col 29 of module new_raft: 90
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 664, col 18 to line 664, col 60 of module new_raft: 90
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 665, col 18 to line 665, col 35 of module new_raft: 90
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 706, col 45 to line 706, col 45 of module new_raft: 90
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 705, col 61 to line 705, col 66 of module new_raft: 30
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<DoRestart line 707, col 1 to line 707, col 9 of module new_raft>: 27:84
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 158, col 28 to line 158, col 42 of module new_raft: 90
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 158, col 28 to line 158, col 35 of module new_raft: 62
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 158, col 40 to line 158, col 42 of module new_raft: 62
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 320, col 8 to line 320, col 55 of module new_raft: 84
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 321, col 8 to line 321, col 56 of module new_raft: 84
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 322, col 8 to line 322, col 71 of module new_raft: 84
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 323, col 8 to line 323, col 72 of module new_raft: 84
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 324, col 8 to line 324, col 54 of module new_raft: 84
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 325, col 8 to line 325, col 29 of module new_raft: 84
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 326, col 8 to line 326, col 73 of module new_raft: 84
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 708, col 45 to line 708, col 45 of module new_raft: 84
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 707, col 61 to line 707, col 66 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<DoLoop line 714, col 1 to line 714, col 6 of module new_raft>: 30:34
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 714, col 14 to line 714, col 73 of module new_raft: 34
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 157, col 28 to line 157, col 42 of module new_raft: 96
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 157, col 28 to line 157, col 35 of module new_raft: 62
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 157, col 40 to line 157, col 42 of module new_raft: 62
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 716, col 14 to line 716, col 44 of module new_raft: 68
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 716, col 14 to line 716, col 39 of module new_raft: 34
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 722, col 22 to line 722, col 45 of module new_raft: 34
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 374, col 24 to line 374, col 29 of module new_raft: 12
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 374, col 24 to line 374, col 24 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 374, col 29 to line 374, col 29 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 134, col 12 to line 134, col 47 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 374, col 39 to line 374, col 63 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 359, col 20 to line 366, col 75 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 358, col 23 to line 358, col 64 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 351, col 28 to line 351, col 46 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 357, col 25 to line 357, col 59 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 145, col 11 to line 145, col 46 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 145, col 28 to line 145, col 46 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 145, col 41 to line 145, col 46 of module new_raft: 12
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 145, col 37 to line 145, col 37 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 145, col 24 to line 145, col 24 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2775:0 @!@!@
+  ||line 357, col 29 to line 357, col 58 of module new_raft: 6:24
+@!@!@ENDMSG 2775 @!@!@
+@!@!@STARTMSG 2775:0 @!@!@
+  |line 367, col 23 to line 370, col 49 of module new_raft: 6:24
+@!@!@ENDMSG 2775 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 352, col 27 to line 355, col 31 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 371, col 10 to line 371, col 12 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 374, col 59 to line 374, col 59 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 374, col 62 to line 374, col 62 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 723, col 38 to line 723, col 38 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 723, col 41 to line 723, col 41 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 724, col 31 to line 724, col 31 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 719, col 24 to line 719, col 56 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 719, col 24 to line 719, col 42 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 160, col 28 to line 165, col 80 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 160, col 31 to line 160, col 42 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 162, col 42 to line 162, col 60 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 163, col 36 to line 165, col 80 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 163, col 39 to line 163, col 56 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 164, col 41 to line 164, col 52 of module new_raft: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 165, col 42 to line 165, col 79 of module new_raft: 4
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 719, col 41 to line 719, col 41 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 719, col 47 to line 719, col 56 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 725, col 24 to line 726, col 56 of module new_raft: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 727, col 20 to line 727, col 41 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 728, col 24 to line 728, col 40 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 188, col 5 to line 188, col 19 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 729, col 31 to line 729, col 31 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 719, col 24 to line 719, col 56 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 719, col 24 to line 719, col 42 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 160, col 28 to line 165, col 80 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 160, col 31 to line 160, col 42 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 162, col 42 to line 162, col 60 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 163, col 36 to line 165, col 80 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 163, col 39 to line 163, col 56 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 164, col 41 to line 164, col 52 of module new_raft: 9
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 165, col 42 to line 165, col 79 of module new_raft: 19
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 719, col 41 to line 719, col 41 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 719, col 47 to line 719, col 56 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 730, col 24 to line 731, col 56 of module new_raft: 28
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2774:0 @!@!@
+<Inv line 282, col 1 to line 282, col 3 of module new_raft>
+@!@!@ENDMSG 2774 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 282, col 8 to line 285, col 27 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 282, col 11 to line 282, col 32 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 197, col 22 to line 201, col 44 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 198, col 25 to line 201, col 44 of module new_raft: 963
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 198, col 28 to line 198, col 33 of module new_raft: 963
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 199, col 28 to line 199, col 58 of module new_raft: 642
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 200, col 28 to line 200, col 44 of module new_raft: 292
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 201, col 28 to line 201, col 44 of module new_raft: 15
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 197, col 34 to line 197, col 39 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 202, col 8 to line 202, col 20 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 283, col 11 to line 283, col 40 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 207, col 6 to line 230, col 39 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 208, col 9 to line 230, col 39 of module new_raft: 321
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 208, col 12 to line 208, col 51 of module new_raft: 321
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 208, col 12 to line 208, col 29 of module new_raft: 321
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 208, col 34 to line 208, col 51 of module new_raft: 10
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 209, col 14 to line 209, col 17 of module new_raft: 321
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 207, col 15 to line 207, col 20 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 284, col 11 to line 284, col 23 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 254, col 5 to line 257, col 17 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 255, col 9 to line 257, col 17 of module new_raft: 321
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 255, col 12 to line 255, col 28 of module new_raft: 321
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 256, col 14 to line 256, col 49 of module new_raft: 10
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 256, col 31 to line 256, col 49 of module new_raft: 30
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 256, col 23 to line 256, col 28 of module new_raft: 10
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 257, col 14 to line 257, col 17 of module new_raft: 311
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 254, col 14 to line 254, col 19 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 285, col 11 to line 285, col 27 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 261, col 5 to line 264, col 17 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 262, col 9 to line 264, col 17 of module new_raft: 321
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 262, col 12 to line 262, col 28 of module new_raft: 321
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 263, col 14 to line 263, col 64 of module new_raft: 10
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 263, col 31 to line 263, col 64 of module new_raft: 30
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 263, col 23 to line 263, col 28 of module new_raft: 10
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 264, col 14 to line 264, col 17 of module new_raft: 311
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 261, col 14 to line 261, col 19 of module new_raft: 107
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2202:0 @!@!@
+End of statistics.
+@!@!@ENDMSG 2202 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(9) at 2022-04-20 11:26:02: 253 states generated (11,000 s/min), 107 distinct states found (4,652 ds/min), 47 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2199:0 @!@!@
+253 states generated, 107 distinct states found, 47 states left on queue.
+@!@!@ENDMSG 2199 @!@!@
+@!@!@STARTMSG 2186:0 @!@!@
+Finished in 1389ms at (2022-04-20 11:26:02)
+@!@!@ENDMSG 2186 @!@!@
