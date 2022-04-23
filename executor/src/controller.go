@@ -205,12 +205,16 @@ func (controller *Controller) stateCompare(trace Trace) {
 		if state != v.state {
 			log.Panicf("role not right, wrong server: %d\n", k)
 		}
-		traceLog := controller.cfg.rafts[k].GetAllLog()
-		if len(traceLog) != len(v.log) {
-			log.Panicf("log not right, wrong server: %d\n", k)
+		myLog := controller.cfg.rafts[k].GetAllLog()
+		if len(myLog) != len(v.log) {
+			DPrintf("%+v\n", myLog)
+			DPrintf("%+v\n", v.log)
+			log.Panicf("log length not right, wrong server: %d\n", k)
 		} else {
-			for k1, v1 := range traceLog {
-				if v1 != v.log[k1] {
+			for k1, v1 := range myLog {
+				traceLog := strings.Split(v.log[k1], ":")[1]
+				//fmt.Printf("%+v\n", traceLog)
+				if v1 != traceLog {
 					log.Panicf("log not right, wrong server: %d, wrong log %v\n", k, v1)
 				}
 			}

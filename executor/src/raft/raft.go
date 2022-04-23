@@ -268,6 +268,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 	}
 	newLog := LogEntry{Command: command, Term: rf.currentTerm, Idx: len(rf.logs)}
 	rf.logs = append(rf.logs, newLog) // 在 本地logs 后直接append
+	rf.persist()
 	index = len(rf.logs) - 1
 	term = rf.currentTerm
 	DPrintf("%d, append logs index at %v", rf.me, newLog.Idx)
@@ -455,6 +456,7 @@ func (rf *Raft) Get_Role() string {
 
 func (rf *Raft) GetAllLog() []string {
 	var allLog []string
+	DPrintf("rf.logs %+v\n", rf.logs)
 	//allLog = make([]string, 0)
 	for _, v := range rf.logs {
 		if v.Command != nil {

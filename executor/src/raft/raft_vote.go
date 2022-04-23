@@ -32,6 +32,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 		//需要更新现有term
 		DPrintf("%d : args.Term > rf.currentTerm", rf.me)
 		rf.currentTerm = args.Term
+		reply.Term = args.Term
 		rf.votedFor = -1
 		reply.VoteGranted = false
 		// rf.changeRole(Follower)

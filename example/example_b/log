@@ -1,0 +1,29 @@
+/home/wego/modle_based_test_raft/build/batch/2022-04-22_10-32-34/traces/trace_8
+-s: /home/wego/modle_based_test_raft/build/batch/2022-04-22_10-32-34/traces/trace_8
+2022/04/22 10:32:42 init, num of server: 3
+2022/04/22 10:32:42 election_timeout, server_number: 1, server_term 0
+msg add Raft.RequestVote112
+msg add Raft.RequestVote110
+2022/04/22 10:32:42 handle, msgs: Raft.RequestVote112
+msg add Raft.RequestVoteResponse121
+2022/04/22 10:32:42 handle, msgs: Raft.RequestVote110
+msg add Raft.RequestVoteResponse101
+2022/04/22 10:32:42 election_timeout, server_number: 2, server_term 1
+msg add Raft.RequestVote221
+msg add Raft.RequestVote220
+2022/04/22 10:32:42 handle, msgs: Raft.RequestVote220
+msg add Raft.RequestVoteResponse202
+2022/04/22 10:32:42 restart, server: 1
+2022/04/22 10:32:42 election_timeout, server_number: 0, server_term 2
+msg add Raft.RequestVote301
+msg add Raft.RequestVote302
+2022/04/22 10:32:42 handleresponse, msgs: Raft.RequestVoteResponse101
+msg add Raft.AppendEntries110
+msg add Raft.AppendEntries112
+2022/04/22 10:32:42 handleresponse, msgs: Raft.RequestVoteResponse202
+msg add Raft.AppendEntries220
+msg add Raft.AppendEntries221
+2022/04/22 10:32:42 clientOperation, data: v5, server_number: 2
+2022/04/22 10:32:42 log not right, wrong server: 2
+panic: log not right, wrong server: 2   //  we found persist() after add log wrong
+
