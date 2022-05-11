@@ -102,11 +102,11 @@ func (trace *Trace) loadState(token string) {
 		i++
 		for ; i < len(values); i++ { // because last word is space , so
 			if values[i] == "" || values[i] == " " {
-				fmt.Println("find wrong")
+				// fmt.Println("find wrong")
 				continue
 			}
 			tmpState.log = append(tmpState.log, values[i])
-			fmt.Printf("%+v\n", tmpState.log)
+			// fmt.Printf("%+v\n", tmpState.log)
 		}
 		trace.States = append(trace.States, &tmpState)
 	}

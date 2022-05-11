@@ -6,6 +6,8 @@ DIR=$(realpath $(dirname ${BASH_SOURCE[0]}))
 # default config file
 DEFAULT_CFG_FILE="${DIR}/../experiments/simulation.ini"
 
+DEFAULT_CFG_FILE="${DIR}/../experiments/simulation.ini"
+
 echo $DEFAULT_CFG_FILE
 
 python3 ../tlc-cmd/tlcwrapper.py $DEFAULT_CFG_FILE
